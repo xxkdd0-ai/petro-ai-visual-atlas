@@ -1,0 +1,103 @@
+{
+  "id": "production-injection-proxy",
+  "sceneId": "pr3",
+  "title": "智能注水调配：响应学习与约束优化",
+  "methods": [
+    "opt"
+  ],
+  "version": "1.0.0",
+  "updated": "2026-10-23",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "先理解三层注采差异，再学习如何在约束内比较配注方案。",
+      "sections": [
+        {
+          "en": "RESERVOIR",
+          "title": "水进入哪一层，决定了它能影响哪里",
+          "html": "<style>\n.lesson-split{display:grid;grid-template-columns:minmax(0,42fr) minmax(0,58fr);gap:30px;align-items:start;max-width:1120px;margin:18px 0}\n.lesson-split figure{margin:0;max-width:620px;width:100%}.lesson-split svg{display:block;width:100%;height:auto;border:1px solid #e9e4d8;border-radius:6px;background:#fdfcf9}\n.sec4 .lesson-split p{font-size:14px;line-height:1.85;margin:0 0 12px}.lesson-split figcaption{font-size:12px;line-height:1.6;color:#79828a;margin-top:8px}\n.panel:has(.lesson-flow) .case-lead{display:block}.panel:has(.lesson-flow) .case-lead>div:first-child{max-width:1000px}.panel:has(.lesson-flow) .case-cells{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:18px 0}\n.lesson-flow h4{font-size:15px;color:#235f51}.lesson-end{display:grid;grid-template-columns:1fr 1fr;gap:30px;max-width:1120px}.lesson-end h4{font-size:15px;color:#235f51}.lesson-end p{font-size:14px!important}\n@media(max-width:900px){.lesson-split,.lesson-end{grid-template-columns:1fr;gap:16px}}@media(max-width:480px){.panel:has(.lesson-flow) .case-cells{grid-template-columns:1fr}}\n</style><div class=\"lesson-split\"><div><p>同一注水井可以对应多个储层。储层连通性、渗透率和剩余油分布不同，水量去向与产油响应也可能不同，不能简单按层数平均就认为合理。</p><p>分层配注是给每层设置注水量。实际还要考虑注入压力与现场控制条件，本例把它简化成三个独立的日配注变量。</p><p>右图用三层结构表达任务，不模拟水驱前缘。A、B、C的响应差异由教学函数设定，不代表某个真实区块。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 260\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><text x=\"30\" y=\"25\">注水井</text><text x=\"495\" y=\"25\">生产井</text><path d=\"M80 35V220M535 35V220\" stroke=\"#79828a\" stroke-width=\"7\"/>\n<rect x=\"105\" y=\"45\" width=\"400\" height=\"46\" rx=\"4\" fill=\"#e6efe5\"/><rect x=\"105\" y=\"103\" width=\"400\" height=\"46\" rx=\"4\" fill=\"#f0e7d8\"/><rect x=\"105\" y=\"161\" width=\"400\" height=\"46\" rx=\"4\" fill=\"#e5eaf2\"/>\n<path d=\"M85 68H220M85 126H260M85 184H190\" stroke=\"#2f7d6b\" stroke-width=\"7\"/><path d=\"M460 68H530M460 126H530M460 184H530\" stroke=\"#b26a39\" stroke-width=\"5\"/>\n<text x=\"285\" y=\"72\">A层 · 响应较早趋缓</text><text x=\"285\" y=\"130\">B层 · 持续缓慢响应</text><text x=\"285\" y=\"188\">C层 · 较敏感但更快饱和</text><text x=\"30\" y=\"240\">分层控制改变水量去向；箭头长度不代表真实流速。</text></g></svg><figcaption>三层注采关系示意，非真实井网或地质剖面。</figcaption></figure></div>"
+        },
+        {
+          "en": "RESPONSE",
+          "title": "多注一单位水，为什么不总能多产同样的油？",
+          "html": "<div class=\"lesson-split\"><div><p>学习响应曲线，是为了比较不同层在不同配注量附近的变化。曲线越平缓，同样增加水量时，模型预计的产油变化越小。</p><p>本例用有噪声的样本拟合每层二次曲线，展示边际响应趋缓。三层分别学习，再把预测产油相加。</p><p>这种可加性与稳定响应是假设。实际层间干扰、滞后及压力变化可能破坏它，不能把曲线当成现场因果规律。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M50 40V205H560\" fill=\"none\" stroke=\"#9ba3a9\"/><text x=\"30\" y=\"25\">产油响应</text><text x=\"420\" y=\"236\">分层注水量 →</text>\n<path d=\"M55 190Q230 60 520 75\" fill=\"none\" stroke=\"#2f7d6b\" stroke-width=\"3\"/><path d=\"M55 190Q280 135 520 95\" fill=\"none\" stroke=\"#b26a39\" stroke-width=\"3\"/><path d=\"M55 190Q230 35 520 115\" fill=\"none\" stroke=\"#41699b\" stroke-width=\"3\"/>\n<text x=\"270\" y=\"40\">同样增加注水，不一定获得同样收益</text><text x=\"535\" y=\"78\">A</text><text x=\"535\" y=\"98\">B</text><text x=\"535\" y=\"120\">C</text></g></svg><figcaption>不同响应形态的概念图；演示中的拟合曲线由训练样本计算。</figcaption></figure></div>"
+        },
+        {
+          "en": "DECISION",
+          "title": "预测响应之后，还要满足约束",
+          "html": "<div class=\"lesson-split\"><div><p>总注水上限代表可用额度，单层上限代表本例允许搜索的范围。只有两个层面的约束同时满足，方案才可参与推荐。</p><p>目标J把预测产油与用水成本放在同一尺度。成本使用教学产油等效量，λ表示重视成本的程度，不是市场价格或财务收益。</p><p>模型可选择少用水。如果人工方案超出总量，演示会明确提示不可行，不把它与可行推荐混为一谈。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><text x=\"25\" y=\"28\">总量约束</text><rect x=\"25\" y=\"45\" width=\"570\" height=\"34\" rx=\"4\" fill=\"#edf1ed\"/><rect x=\"25\" y=\"45\" width=\"190\" height=\"34\" fill=\"#d5e7dd\"/><rect x=\"215\" y=\"45\" width=\"190\" height=\"34\" fill=\"#eddfcd\"/><rect x=\"405\" y=\"45\" width=\"120\" height=\"34\" fill=\"#dbe3ef\"/>\n<text x=\"55\" y=\"68\">A层配注</text><text x=\"250\" y=\"68\">B层配注</text><text x=\"425\" y=\"68\">C层</text><text x=\"535\" y=\"68\">余量</text>\n<text x=\"25\" y=\"118\">单层上限：A ≤ 100，B ≤ 120，C ≤ 90 m³/d</text><text x=\"25\" y=\"153\">总量：A + B + C ≤ 用户设定上限</text><text x=\"25\" y=\"188\">目标：预测产油 − λ × 教学成本</text><text x=\"25\" y=\"224\">用水有代价，因此无需强制用完额度。</text></g></svg><figcaption>默认总量上限180 m³/d；三层上限固定，均为教学设定。</figcaption></figure></div>"
+        },
+        {
+          "en": "DATA & LIMITS",
+          "title": "数据依据、模型边界与现场复核",
+          "html": "<div class=\"lesson-end\"><div><h4>每层48条训练，24条独立测试</h4><p>训练共144条，测试共72条，使用独立伪随机种子。样本覆盖各层0到上限的范围；测试标签不参与拟合或搜索。</p><p>代理模型输入为注水量及其二次项，目标为合成产油量。留出RMSE与优化目标分开显示，较低误差不等于推荐可靠。</p></div><div><h4>从教学候选到现场方案还有距离</h4><p>未建模层间窜流、压力、动态响应和测量偏差。推荐应先接受专业复核及现场试验，不能直接用于生产控制。</p><p>参考：<a href=\"https://www.mdpi.com/1996-1073/16/23/7764\">分层配注影响因素研究</a> · <a href=\"https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html\">多项式特征方法</a>。本例未复现论文实验。</p></div></div>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "案例：为一个三层注水井组选择下一轮配注候选（教学情景）",
+      "lead": [
+        "假设一个井组分为A、B、C三个可独立配注的层。生产组可用总水量默认180 m³/d，三层上限分别为100、120、90 m³/d，需要判断继续等量分配是否合理。",
+        "每层生成48条训练样本和24条独立测试样本，覆盖允许的配注范围。假设响应稳定且层间可加，不包含动态滞后、压力限制或窜流。这是教学情景，不是真实油田案例。",
+        "先学习产油响应，再在5 m³/d网格内比较可行方案。验收关注独立预测误差、约束满足及同一模型下的目标差异，不预设实际增产幅度。"
+      ],
+      "stats": [
+        [
+          "训练 / 测试",
+          "144 / 72条"
+        ],
+        [
+          "默认总量上限",
+          "180 m³/d"
+        ],
+        [
+          "搜索网格步长",
+          "5 m³/d"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "整理分层响应样本",
+          "do": "为A/B/C每层生成48条训练和24条测试数据，单位分别为m³水/d与m³油/d。",
+          "effect": "得到三组具有不同响应的教学样本。",
+          "trap": "真实资料必须处理滞后、工况变化和可比性。"
+        },
+        {
+          "name": "拟合二次代理模型",
+          "do": "将q缩放为q/120，使用常数、一次项、二次项拟合响应；仅对非截距项加1e-6稳定项。",
+          "effect": "每层得到可解释的曲线与三个系数。",
+          "trap": "不能用独立测试误差反向调参追逐分数。"
+        },
+        {
+          "name": "定义可行域与目标",
+          "do": "设置总量、单层上限和成本权重，约束q≥0；J=预测产油−λ×成本。",
+          "effect": "排除超过预算或单层上限的方案。",
+          "trap": "合成成本系数不代表真实电费或水价。"
+        },
+        {
+          "name": "枚举可行方案",
+          "do": "按5 m³/d遍历三层配注；每个A/B格继续搜索最优C，记录最高目标值。",
+          "effect": "得到候选最优、可行方案数及目标热图。",
+          "trap": "网格最优不等于连续全局最优或油田最优。"
+        },
+        {
+          "name": "比较并复核",
+          "do": "比较推荐、等量与人工方案；另用独立测试集计算每层RMSE。",
+          "effect": "同时理解预测误差、目标改善和约束满足情况。",
+          "trap": "改善是代理模型估计，不是实际现场增产量。"
+        }
+      ],
+      "metrics": {
+        "title": "两个需要看懂的关键环节",
+        "html": "<div class=\"lesson-flow\"><h4>学习响应：散点怎样成为可计算的曲线？</h4><div class=\"lesson-split\"><div><p>拟合的是样本中注水量与产油量的关系，不是把预设真实曲线直接交给优化器。二次项允许表达响应趋缓。</p><p>独立测试点只用来计算RMSE。模型拟合和方案搜索都不读取测试标签，演示可换一组样本观察稳定性。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M50 35V205H570\" stroke=\"#9ba3a9\" fill=\"none\"/><path d=\"M60 186Q240 60 550 78\" stroke=\"#2f7d6b\" stroke-width=\"3\" fill=\"none\"/>\n<g fill=\"white\" stroke=\"#82988c\"><circle cx=\"85\" cy=\"171\" r=\"4\"/><circle cx=\"140\" cy=\"144\" r=\"4\"/><circle cx=\"190\" cy=\"119\" r=\"4\"/><circle cx=\"270\" cy=\"101\" r=\"4\"/><circle cx=\"350\" cy=\"77\" r=\"4\"/><circle cx=\"420\" cy=\"82\" r=\"4\"/><circle cx=\"505\" cy=\"75\" r=\"4\"/></g>\n<g fill=\"#b26a39\"><circle cx=\"110\" cy=\"165\" r=\"4\"/><circle cx=\"230\" cy=\"103\" r=\"4\"/><circle cx=\"385\" cy=\"80\" r=\"4\"/><circle cx=\"540\" cy=\"82\" r=\"4\"/></g><text x=\"220\" y=\"30\">ŷ = β₀ + β₁(q/120) + β₂(q/120)²</text><text x=\"65\" y=\"237\">训练点 → 拟合曲线；独立测试点 → 计算误差</text></g></svg><figcaption>概念示意；实时散点、曲线和误差在案例演示中呈现。</figcaption></figure></div><h4>搜索方案：为什么热图只有两个轴？</h4><div class=\"lesson-split\"><div><p>实际枚举三个变量。热图固定A和B后，在满足剩余预算和C层上限的候选中选取最高目标值，因此每格已经包含一次C层搜索。</p><p>比较采用同一代理模型和成本定义。提高成本权重可能使推荐留出部分预算；这不是约束检查遗漏。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"25\" y=\"50\" width=\"170\" height=\"85\" rx=\"5\" fill=\"#e6efe5\"/><rect x=\"225\" y=\"50\" width=\"170\" height=\"85\" rx=\"5\" fill=\"#f0e7d8\"/><rect x=\"425\" y=\"50\" width=\"170\" height=\"85\" rx=\"5\" fill=\"#e5eaf2\"/>\n<text x=\"43\" y=\"80\">枚举5 m³/d网格</text><text x=\"43\" y=\"109\">检查总量及单层上限</text><text x=\"244\" y=\"80\">代理模型计算产油</text><text x=\"244\" y=\"109\">扣除加权成本</text><text x=\"446\" y=\"80\">选择最高目标值</text><text x=\"446\" y=\"109\">与等量和人工比较</text><path d=\"M197 92H220M398 92H420\" stroke=\"#79828a\" stroke-width=\"2\"/>\n<text x=\"30\" y=\"181\">热图的一格固定A、B；在格内继续搜索C。</text><text x=\"30\" y=\"214\">推荐受到模型误差、网格精度与教学假设限制。</text></g></svg><figcaption>算法不使用测试成绩选方案，推荐由目标与约束决定。</figcaption></figure></div></div>"
+      }
+    },
+    "demo": {
+      "mode": "module",
+      "js": "demo/module.js",
+      "html": "demo/index.html",
+      "label": "案例演示"
+    }
+  }
+}

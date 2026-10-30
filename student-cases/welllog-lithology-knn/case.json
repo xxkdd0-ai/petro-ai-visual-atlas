@@ -1,0 +1,103 @@
+{
+  "id": "welllog-lithology-knn",
+  "sceneId": "w4",
+  "title": "岩性智能识别：多曲线融合与跨井验证",
+  "methods": [
+    "ts"
+  ],
+  "version": "1.0.0",
+  "updated": "2026-10-23",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "沿深度读懂多条测井曲线，再判断岩性分类的依据与错误。",
+      "sections": [
+        {
+          "en": "GEOLOGY",
+          "title": "岩性柱告诉我们穿过了什么地层",
+          "html": "<style>\n.lesson-split{display:grid;grid-template-columns:minmax(0,42fr) minmax(0,58fr);gap:30px;align-items:start;max-width:1120px;margin:18px 0}\n.lesson-split figure{margin:0;max-width:620px;width:100%}.lesson-split svg{display:block;width:100%;height:auto;border:1px solid #e9e4d8;border-radius:6px;background:#fdfcf9}\n.sec4 .lesson-split p{font-size:14px;line-height:1.85;margin:0 0 12px}.lesson-split figcaption{font-size:12px;line-height:1.6;color:#79828a;margin-top:8px}\n.panel:has(.lesson-flow) .case-lead{display:block}.panel:has(.lesson-flow) .case-lead>div:first-child{max-width:1000px}.panel:has(.lesson-flow) .case-cells{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:18px 0}\n.lesson-flow h4{font-size:15px;color:#235f51}.lesson-end{display:grid;grid-template-columns:1fr 1fr;gap:30px;max-width:1120px}.lesson-end h4{font-size:15px;color:#235f51}.lesson-end p{font-size:14px!important}\n@media(max-width:900px){.lesson-split,.lesson-end{grid-template-columns:1fr;gap:16px}}@media(max-width:480px){.panel:has(.lesson-flow) .case-cells{grid-template-columns:1fr}}\n</style><div class=\"lesson-split\"><div><p>测井沿井深记录岩层的物理响应，岩性解释尝试把这些测量转成砂岩、泥岩、灰岩等地质名称，为后续储层解释提供基础。</p><p>不同岩性可能出现相近响应；同一岩性也会因孔隙度、泥质或流体变化呈现不同曲线。仅凭某一条曲线的高低，容易把多解问题过度简化。</p><p>本例只生成三类含水简化地层，不包含气层、复杂矿物或井径异常。图中的层段真值属于教学标签，不是实测岩心结果。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 265\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"40\" y=\"35\" width=\"230\" height=\"55\" fill=\"#e8d9bd\"/><rect x=\"40\" y=\"90\" width=\"230\" height=\"70\" fill=\"#dce2d6\"/><rect x=\"40\" y=\"160\" width=\"230\" height=\"55\" fill=\"#dbe6ed\"/><text x=\"60\" y=\"67\">砂岩</text><text x=\"60\" y=\"130\">泥岩</text><text x=\"60\" y=\"194\">灰岩</text><path d=\"M225 25V225\" stroke=\"#6e7e75\" stroke-width=\"7\"/><path d=\"M270 62H325M270 125H325M270 187H325\" stroke=\"#9ba3a9\" stroke-dasharray=\"4 4\"/><text x=\"340\" y=\"66\">孔隙、矿物与流体影响响应</text><text x=\"340\" y=\"129\">同一深度读取多种测量</text><text x=\"340\" y=\"191\">结合区域地质与岩心定名</text><text x=\"40\" y=\"245\">岩性识别是储层解释的基础，不直接判断是否含油或产能。</text></g></svg><figcaption>地层与井筒示意，层厚和岩性顺序不代表具体油田。</figcaption></figure></div>"
+        },
+        {
+          "en": "LOG RESPONSE",
+          "title": "GR、DEN与NPHI分别提供什么线索？",
+          "html": "<div class=\"lesson-split\"><div><p>自然伽马反映天然放射性，常帮助识别泥质变化，但砂岩和灰岩的响应也可能重叠，放射性矿物还会带来例外。</p><p>密度曲线记录体积密度，中子曲线与氢含量和标定条件有关。骨架、孔隙与流体共同影响两者，不能把曲线值直接当作纯矿物参数。</p><p>演示将三条曲线沿深度对齐。选定一个深度后，比较该位置的三维响应与训练井样本，观察联合信息是否比单GR规则更有用。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"20\" y=\"40\" width=\"180\" height=\"155\" rx=\"6\" fill=\"#e6efe5\"/><rect x=\"220\" y=\"40\" width=\"180\" height=\"155\" rx=\"6\" fill=\"#f0e7d8\"/><rect x=\"420\" y=\"40\" width=\"180\" height=\"155\" rx=\"6\" fill=\"#e5eaf2\"/><text x=\"40\" y=\"70\">GR · API</text><text x=\"40\" y=\"105\">自然放射性响应</text><text x=\"40\" y=\"137\">泥质识别的线索</text><text x=\"40\" y=\"170\">不是岩性唯一指纹</text><text x=\"240\" y=\"70\">DEN · g/cm³</text><text x=\"240\" y=\"105\">体积密度响应</text><text x=\"240\" y=\"137\">骨架 + 孔隙流体</text><text x=\"240\" y=\"170\">不等于矿物密度</text><text x=\"440\" y=\"70\">NPHI · v/v</text><text x=\"440\" y=\"105\">中子孔隙度响应</text><text x=\"440\" y=\"137\">氢含量与标定影响</text><text x=\"440\" y=\"170\">需与其它曲线结合</text><text x=\"25\" y=\"235\">三条曲线对齐深度，再比较同一位置的联合响应。</text></g></svg><figcaption>三种观测量的作用示意；本例未实现完整测井环境校正。</figcaption></figure></div>"
+        },
+        {
+          "en": "CLASSIFICATION",
+          "title": "近邻投票给出候选岩性，也保留判断依据",
+          "html": "<div class=\"lesson-split\"><div><p>训练井提供有标签的三曲线样本。先用训练均值与标准差统一尺度，再计算欧氏距离，找出最近的k个样本。</p><p>按邻居类别计票，票数最多的类别作为当前预测。演示显示各类票数、邻居井号及深度，帮助检查预测来自哪些相似响应。</p><p>深度和井号仅用于解释来源，不进入分类特征。本例不对结果做平滑，保留孤立错误，让薄层与边界附近的误判可见。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 265\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M45 30V215H350\" stroke=\"#9ba3a9\" fill=\"none\"/><g fill=\"#b8894b\"><circle cx=\"120\" cy=\"155\" r=\"6\"/><circle cx=\"155\" cy=\"145\" r=\"6\"/><circle cx=\"170\" cy=\"175\" r=\"6\"/><circle cx=\"105\" cy=\"182\" r=\"6\"/></g><g fill=\"#75846b\"><circle cx=\"270\" cy=\"75\" r=\"6\"/><circle cx=\"290\" cy=\"105\" r=\"6\"/><circle cx=\"250\" cy=\"115\" r=\"6\"/></g><g fill=\"#5a85a3\"><circle cx=\"100\" cy=\"80\" r=\"6\"/><circle cx=\"135\" cy=\"95\" r=\"6\"/><circle cx=\"150\" cy=\"65\" r=\"6\"/></g><circle cx=\"154\" cy=\"139\" r=\"35\" stroke=\"#8769a9\" stroke-dasharray=\"4 4\" fill=\"none\"/><path d=\"M154 129l8 10-8 10-8-10Z\" fill=\"#8769a9\"/><text x=\"370\" y=\"65\">当前点与训练点比较</text><text x=\"370\" y=\"105\">近邻类别计票</text><text x=\"370\" y=\"145\">意见分散时优先复核</text><text x=\"370\" y=\"185\">支持率不等于概率</text><text x=\"45\" y=\"245\">二维概念投影；演示距离实际使用标准化后的三条曲线。</text></g></svg><figcaption>近邻概念图；票数与距离在演示中由当前数据实时计算。</figcaption></figure></div>"
+        },
+        {
+          "en": "DATA & LIMITS",
+          "title": "跨井验证与解释边界",
+          "html": "<div class=\"lesson-end\"><div><h4>整井留出，避免相邻点泄漏</h4><p>训练井1—6共720点，测试井T1/T2共240点。每井120个深度采样点，采样间距1 m，覆盖2000—2119 m。不同井使用独立种子与井间偏移。</p><p>标准化只看训练井；更换测试井、噪声或GR偏移不重训模型。评价包括准确率、宏平均F1与各类召回率。</p></div><div><h4>教学分类不等于储层定论</h4><p>单GR基线的38与80 API只是教学阈值，不是通用岩性标准。近邻支持率也不是校准概率；真实应用需要岩心、区域地质、流体与仪器校正资料。</p><p>参考：<a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-logging\">常规测井解释</a> · <a href=\"https://www.kgs.ku.edu/PRS/ReadRocks/Overlay.html\">中子—密度联合解释</a>。本例未复现现场数据。</p></div></div>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "案例：为两口新井建立可复核的岩性初判（教学情景）",
+      "lead": [
+        "假设解释组已有六口井的测井曲线与岩性定名，希望对两口未参与训练的新井先做砂岩、泥岩和灰岩初判，再集中复核意见分散或易混淆的层段。",
+        "每井生成120个深度点，包含GR、体积密度和中子孔隙度。训练共720点，测试240点；假设为含水简化地层，各井存在独立响应偏移。",
+        "验收不仅比较总体准确率，还看各类召回率、误判在哪些深度集中，以及增加噪声或GR偏移后是否稳定。没有预设解释工时或现场准确率。"
+      ],
+      "stats": [
+        [
+          "训练井 / 点",
+          "6口 / 720点"
+        ],
+        [
+          "测试井 / 点",
+          "2口 / 240点"
+        ],
+        [
+          "输入曲线",
+          "GR / DEN / NPHI"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "准备并按井划分资料",
+          "do": "六口训练井与两口测试井分别生成，每井120点；同井相邻点保留在同一集合。",
+          "effect": "得到720训练点与240独立测试点。",
+          "trap": "随机打散同井深度容易高估跨井能力。"
+        },
+        {
+          "name": "对齐曲线并统一尺度",
+          "do": "在同一深度读取GR、DEN、NPHI，仅用训练均值和标准差标准化。",
+          "effect": "不同单位的曲线可共同参与距离计算。",
+          "trap": "测试井统计量不可用来反向修正训练尺度。"
+        },
+        {
+          "name": "查询近邻与类别投票",
+          "do": "用三维欧氏距离找k个训练样本，多数票决定候选岩性；平票按类别顺序处理。",
+          "effect": "输出支持率及可追溯的邻居来源。",
+          "trap": "票数不是概率，高支持也可能错误。"
+        },
+        {
+          "name": "绘制岩性柱并定位误判",
+          "do": "逐采样点比较真值与预测，把连续误判点整理为复核区段。",
+          "effect": "通过深度游标联动曲线、岩性与近邻。",
+          "trap": "不将采样点错误区段冒充精确地层界面。"
+        },
+        {
+          "name": "跨井评价与单曲线对比",
+          "do": "在两口留出井上统计混淆矩阵与宏平均F1，并比较单GR规则。",
+          "effect": "改变噪声、井间偏移，观察泛化弱点。",
+          "trap": "合成跨井测试不能替代真实跨区块验证。"
+        }
+      ],
+      "metrics": {
+        "title": "两个需要看懂的关键环节",
+        "html": "<div class=\"lesson-flow\"><h4>为什么要按井划分，而不是随机拆点？</h4><div class=\"lesson-split\"><div><p>同井相邻深度常共享井间偏移与层段响应。随机把邻近点放进训练和测试，模型可能只是记住相似记录。</p><p>本例六口训练井始终不变。改变测试井响应，不改变训练尺度或近邻库，便于观察跨井偏移带来的影响。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"25\" y=\"35\" width=\"285\" height=\"150\" rx=\"6\" fill=\"#e6efe5\"/><rect x=\"345\" y=\"35\" width=\"250\" height=\"150\" rx=\"6\" fill=\"#f0e7d8\"/><text x=\"45\" y=\"65\">训练井1—6</text><text x=\"45\" y=\"100\">6 × 120 = 720个点</text><text x=\"45\" y=\"135\">确定均值、尺度与近邻库</text><text x=\"45\" y=\"165\">不混入测试井任何标签</text><text x=\"365\" y=\"65\">测试井T1、T2</text><text x=\"365\" y=\"100\">2 × 120 = 240个点</text><text x=\"365\" y=\"135\">整井留出，只用于评价</text><text x=\"365\" y=\"165\">可改变噪声与GR偏移</text><text x=\"25\" y=\"233\">同井相邻深度常相关，随机拆点可能让模型“见过近似答案”。</text></g></svg><figcaption>独立井作为验证单位；本例仍只是合成条件下的泛化实验。</figcaption></figure></div><h4>怎样把一个分数变成可复核的地质区段？</h4><div class=\"lesson-split\"><div><p>总体准确率可能掩盖某类岩性或某段深度的连续错误。因此同时画出真实岩性、预测岩性与误判标记。</p><p>跳转到误判深度后，检查三条曲线和邻居来源，判断是响应重叠、噪声还是井间偏移。区段只用于组织复核，不自动定层界。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 260\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><text x=\"35\" y=\"30\">采样深度</text><text x=\"180\" y=\"30\">真实岩性</text><text x=\"325\" y=\"30\">预测岩性</text><text x=\"470\" y=\"30\">误判</text><text x=\"35\" y=\"82\">2030 m</text><text x=\"35\" y=\"132\">2031 m</text><text x=\"35\" y=\"182\">2032 m</text><rect x=\"180\" y=\"50\" width=\"100\" height=\"50\" fill=\"#b8894b\"/><rect x=\"180\" y=\"100\" width=\"100\" height=\"100\" fill=\"#75846b\"/><rect x=\"325\" y=\"50\" width=\"100\" height=\"100\" fill=\"#b8894b\"/><rect x=\"325\" y=\"150\" width=\"100\" height=\"50\" fill=\"#75846b\"/><rect x=\"470\" y=\"50\" width=\"60\" height=\"50\" fill=\"#edf0e9\"/><rect x=\"470\" y=\"100\" width=\"60\" height=\"50\" fill=\"#a8473e\"/><rect x=\"470\" y=\"150\" width=\"60\" height=\"50\" fill=\"#edf0e9\"/><text x=\"35\" y=\"238\">逐点核对 → 连续误判点合并成复核区段；不是精确地层界面。</text></g></svg><figcaption>误判格与岩性柱逐行对齐，深度从上向下增加。</figcaption></figure></div></div>"
+      }
+    },
+    "demo": {
+      "mode": "module",
+      "js": "demo/module.js",
+      "html": "demo/index.html",
+      "label": "案例演示"
+    }
+  }
+}

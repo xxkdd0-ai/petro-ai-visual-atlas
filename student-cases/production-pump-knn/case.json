@@ -1,0 +1,145 @@
+{
+  "id": "production-pump-knn",
+  "sceneId": "pr1",
+  "title": "抽油机井工况诊断：形态特征与近邻分类",
+  "methods": [
+    "cv"
+  ],
+  "version": "1.2.3",
+  "updated": "2026-10-23",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "看懂抽油机、示功图与工况之间的关系，再理解算法能辅助哪一步。",
+      "judge": [
+        {
+          "label": "数据",
+          "value": "合成曲线",
+          "desc": "三类简化形态"
+        },
+        {
+          "label": "方法",
+          "value": "k近邻",
+          "desc": "四维形态特征"
+        },
+        {
+          "label": "运行",
+          "value": "纯前端",
+          "desc": "无需联网计算"
+        },
+        {
+          "label": "边界",
+          "value": "教学",
+          "desc": "非矿场验证"
+        }
+      ],
+      "sections": [
+        {
+          "no": 1,
+          "en": "CONTEXT",
+          "title": "从抽油机到井下泵：测到的是什么",
+          "html": "<style>\n.pump-split{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:28px;align-items:start;margin:16px 0}\n.pump-split figure{margin:0!important;max-width:720px!important;width:100%}\n.pump-split p{margin:0 0 12px}\n.panel:has(.pump-workflow) .case-lead{display:block}\n.panel:has(.pump-workflow) .case-lead>div:first-child{max-width:1000px}\n.panel:has(.pump-workflow) .case-cells{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:18px 0}\n.pump-workflow h4{font-size:15px;margin:0 0 12px;color:#235f51}\n.pump-workflow article+article{margin-top:28px;padding-top:24px;border-top:1px solid #e9e4d8}\n@media(max-width:900px){.pump-split{grid-template-columns:1fr;gap:12px}}\n@media(max-width:480px){.panel:has(.pump-workflow) .case-cells{grid-template-columns:1fr}}\n</style><style>\n.pump-background{max-width:1120px}\n.pump-background.pump-split{grid-template-columns:minmax(0,42fr) minmax(0,58fr);gap:30px}\n.pump-background.pump-split figure{max-width:620px!important}\n.sec4 .pump-background p,.sec4 .pump-background-end p{font-size:14px;line-height:1.85;margin:0 0 12px}\n.pump-background strong{font-weight:600;color:var(--ink)}\n.pump-background-end{display:grid;grid-template-columns:1fr 1fr;gap:36px;max-width:1120px;margin-top:18px}\n.pump-background-end>div{min-width:0}\n.pump-background-end h4{font-size:15px;color:var(--jade-d);margin:0 0 12px}\n@media(max-width:900px){.pump-background.pump-split,.pump-background-end{grid-template-columns:1fr;gap:18px}}\n</style><div class=\"pump-split pump-background\"><div><p><strong>从地面运动看井下举升。</strong>有杆泵通过往复运动举升井液。右图沿“地面驱动—抽油杆—井下泵”展开，先看三者的连接，再看井下泵的局部结构。</p><p><strong>传感器实际测到什么？</strong>地面传感器记录光杆的位移与载荷。将一个往复周期内的两组读数对应起来，就得到地面示功图；它记录的是地面测点的受力与运动变化。</p><p><strong>为什么还需要解释？</strong>杆柱弹性与振动会影响地面曲线，因此地面示功图不能直接等同于井下泵功图。本例用简化形态讲解识别流程，不求解杆柱波动方程。</p></div><figure style=\"margin:18px 0;max-width:620px\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 295\" role=\"img\" aria-label=\"图1　抽油机与井下泵的连接关系。结构为教学简化，尺寸不按比例。\" style=\"display:block;width:100%;height:auto;background:#fdfcf9;border:1px solid #e9e4d8;border-radius:6px\"><defs><marker id=\"arrow\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#2f7d6b\"/></marker></defs><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"12\" fill=\"#4d565b\" stroke-linejoin=\"round\">\n<path d=\"M25 100H285\" stroke=\"#c9c2b0\"/><path d=\"M30 110H290M30 155H290M30 200H290M30 245H290\" stroke=\"#eee9dc\" stroke-dasharray=\"5 5\"/>\n<path d=\"M65 98L110 42L140 98ZM103 42L110 65L118 42\" stroke=\"#79828a\" fill=\"#f1eee5\" stroke-width=\"2\"/>\n<path d=\"M60 42L168 30Q187 37 185 57\" fill=\"none\" stroke=\"#2f7d6b\" stroke-width=\"7\"/><path d=\"M183 56V245\" stroke=\"#b26a39\" stroke-width=\"2\"/>\n<circle cx=\"60\" cy=\"78\" r=\"14\" stroke=\"#79828a\" fill=\"none\" stroke-width=\"3\"/><path d=\"M60 78L72 43\" stroke=\"#79828a\" stroke-width=\"2\"/>\n<rect x=\"169\" y=\"103\" width=\"28\" height=\"153\" fill=\"#e6f1ec\" fill-opacity=\".5\" stroke=\"#9ba3a9\"/><path d=\"M183 104V222\" stroke=\"#b26a39\" stroke-width=\"2\"/><rect x=\"174\" y=\"221\" width=\"18\" height=\"19\" fill=\"#2f7d6b\"/>\n<path d=\"M196 210L330 80M196 250L330 245\" stroke=\"#c9c2b0\" stroke-dasharray=\"4 4\"/>\n<rect x=\"325\" y=\"35\" width=\"270\" height=\"230\" rx=\"5\" fill=\"#fff\" stroke=\"#ddd7c8\"/><text x=\"340\" y=\"55\">井下泵局部放大 · 结构示意</text>\n<path d=\"M355 75V245H420V75\" stroke=\"#79828a\" stroke-width=\"4\" fill=\"#f3f7f4\"/><path d=\"M387 66V145\" stroke=\"#b26a39\" stroke-width=\"3\"/>\n<rect x=\"360\" y=\"145\" width=\"55\" height=\"35\" fill=\"#d4e6da\" stroke=\"#2f7d6b\" stroke-width=\"2\"/><path d=\"M377 172L387 157L397 172Z\" fill=\"#fff\" stroke=\"#2f7d6b\"/><path d=\"M372 233L387 217L402 233Z\" fill=\"#fff\" stroke=\"#2f7d6b\"/>\n<path d=\"M343 189V120\" stroke=\"#2f7d6b\" marker-end=\"url(#arrow)\"/><path d=\"M388 260V241\" stroke=\"#2f7d6b\" marker-end=\"url(#arrow)\"/>\n<path d=\"M420 100H445M414 149H445M397 165H445M402 226H445\" stroke=\"#c9c2b0\"/>\n<text x=\"452\" y=\"104\">① 泵筒</text><text x=\"452\" y=\"151\">② 柱塞</text><text x=\"452\" y=\"175\">③ 游动阀</text><text x=\"452\" y=\"230\">④ 固定阀</text>\n<text x=\"30\" y=\"26\">地面驱动</text><text x=\"207\" y=\"88\">载荷 / 位移测量</text><text x=\"210\" y=\"163\">抽油杆</text><text x=\"35\" y=\"275\">地面卡 → 杆柱响应 → 井下泵状态，三者不能直接等同</text>\n</g></svg><figcaption style=\"font-size:12px;line-height:1.6;color:#79828a;margin-top:8px\">图1　抽油机与井下泵的连接关系。结构为教学简化，尺寸不按比例。</figcaption></figure></div>"
+        },
+        {
+          "no": 2,
+          "en": "READ THE CARD",
+          "title": "一张图怎样表达一个冲程",
+          "html": "<div class=\"pump-split pump-background\"><div><p><strong>先读坐标，再沿曲线走一周。</strong>横轴表示位移，纵轴表示载荷。按时间顺序连接上冲程与下冲程的采样点，得到一个往复周期的闭合曲线；图中箭头帮助区分两个方向。</p><p><strong>比较同一位置的上下支。</strong>在相同位移处，观察两条曲线之间的载荷差，再比较左、中、右区间的差异。局部间距收缩与整体包络变化，是后续形态特征的来源。</p><p><strong>面积在这里代表什么？</strong>真实载荷—位移曲线的面积与周期做功相关。本例将两轴缩放到 0—1，便于比较形状，但不再保留绝对载荷与冲程长度；归一化面积仅用作分类特征。</p></div><figure style=\"margin:18px 0;max-width:620px\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 255\" role=\"img\" aria-label=\"图2　先读坐标与方向，再读形态。归一化面积不等于实际做功。\" style=\"display:block;width:100%;height:auto;background:#fdfcf9;border:1px solid #e9e4d8;border-radius:6px\"><defs><marker id=\"arrow\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#2f7d6b\"/></marker></defs><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"12\" fill=\"#4d565b\" stroke-linejoin=\"round\"><path d=\"M55 205V35M55 205H355\" stroke=\"#9ba3a9\" fill=\"none\"/><path d=\"M72 189L91 60H318L340 189Z\" fill=\"#e6f1ec\" stroke=\"#2f7d6b\" stroke-width=\"2\"/>\n<path d=\"M140 49H250M260 199H150\" stroke=\"#2f7d6b\" marker-end=\"url(#arrow)\"/><text x=\"165\" y=\"39\">上冲程</text><text x=\"175\" y=\"222\">下冲程</text><text x=\"15\" y=\"25\">载荷</text><text x=\"310\" y=\"239\">位移</text>\n<text x=\"35\" y=\"209\">0</text><text x=\"35\" y=\"64\">1</text><text x=\"335\" y=\"221\">1</text><path d=\"M210 120H386\" stroke=\"#b26a39\" stroke-dasharray=\"4 3\"/><text x=\"395\" y=\"117\">阴影：闭合面积</text><text x=\"395\" y=\"141\">本例归一化后作为形态特征</text><text x=\"395\" y=\"181\">横向距离：冲程位置</text><text x=\"395\" y=\"203\">纵向距离：载荷变化</text></g></svg><figcaption style=\"font-size:12px;line-height:1.6;color:#79828a;margin-top:8px\">图2　先读坐标与方向，再读形态。归一化面积不等于实际做功。</figcaption></figure></div>"
+        },
+        {
+          "no": 3,
+          "en": "INTERVENTION",
+          "title": "AI介入的是形态比较，不是代替现场确诊",
+          "html": "<div class=\"pump-split pump-background\"><div><p><strong>先在相同坐标下比较。</strong>右图并排展示三种教学形态：正常样本上下支间距较稳定，供液不足样本局部间距收缩，阀漏样本包络收窄且更圆滑。这些是简化示意，并非现场诊断的唯一标准。</p><p><strong>把形状转成可比较的数值。</strong>本例提取闭合面积及左、中、右三段平均间距，再用 k 近邻查找形态相似的有标签样本，通过投票得到候选类别。</p><p><strong>让分类服务于人工初筛。</strong>操作人员同时查看候选类别与相似样本，优先复核异常或依据不足的曲线。真实工况可能重叠，最终判断仍需结合设备信息和现场记录。</p></div><figure style=\"margin:18px 0;max-width:620px\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 220\" role=\"img\" aria-label=\"图3　三类简化形态使用相同坐标范围，便于比较；真实工况可能重叠。\" style=\"display:block;width:100%;height:auto;background:#fdfcf9;border:1px solid #e9e4d8;border-radius:6px\"><defs><marker id=\"arrow\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#2f7d6b\"/></marker></defs><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"12\" fill=\"#4d565b\" stroke-linejoin=\"round\"><g transform=\"translate(15,30)\"><text x=\"20\" y=\"-8\">正常</text><path d=\"M15 15V135H175\" stroke=\"#c9c2b0\" fill=\"none\"/><path d=\"M20 125L30 35H155L165 125Z\" fill=\"#2f7d6b\" fill-opacity=\".07\" stroke=\"#2f7d6b\" stroke-width=\"2\"/><text x=\"20\" y=\"160\">上下支间距较稳定</text></g><g transform=\"translate(215,30)\"><text x=\"20\" y=\"-8\">供液不足</text><path d=\"M15 15V135H175\" stroke=\"#c9c2b0\" fill=\"none\"/><path d=\"M20 125L40 116L75 105L105 40L155 35L165 125Z\" fill=\"#b26a39\" fill-opacity=\".07\" stroke=\"#b26a39\" stroke-width=\"2\"/><text x=\"20\" y=\"160\">局部行程间距收缩</text></g><g transform=\"translate(415,30)\"><text x=\"20\" y=\"-8\">阀漏</text><path d=\"M15 15V135H175\" stroke=\"#c9c2b0\" fill=\"none\"/><path d=\"M20 125Q90 -35 165 125Z\" fill=\"#41699b\" fill-opacity=\".07\" stroke=\"#41699b\" stroke-width=\"2\"/><text x=\"20\" y=\"160\">包络收窄、形态圆滑</text></g></g></svg><figcaption style=\"font-size:12px;line-height:1.6;color:#79828a;margin-top:8px\">图3　三类简化形态使用相同坐标范围，便于比较；真实工况可能重叠。</figcaption></figure></div>"
+        },
+        {
+          "no": 4,
+          "en": "DATA & LIMITS",
+          "title": "从教学实验走向实际应用",
+          "html": "<div class=\"pump-background-end\"><div><h4>准备哪些数据，怎样判断结果可信</h4><p>真实应用需要完整的载荷—位移周期、传感器质量信息、设备参数、作业验证工况标签，并按井划分独立测试集。本演示为180条合成训练样本与90条合成测试样本，使用不同种子。合成成绩仅说明简化形状的可分性。</p><p>同时显示最近类中心基线、混淆矩阵、各类召回率与宏平均F1。近邻意见不一致或偏离已知形态时，提示人工复核。</p></div><div><h4>难点与参考方向</h4><p>复合故障、跨井差异、测量噪声和不平衡标签都会使识别变难。进一步可研究曲线配准、跨井验证、图像分类和域适应。教学样本不包含全部真实工况。</p><p>专业参考：<a href=\"https://www.mdpi.com/1424-8220/20/19/5659\" target=\"_blank\" rel=\"noreferrer\">Sensors 2020示功图工况识别研究</a>；<a href=\"https://www.mdpi.com/1424-8220/21/13/4546\" target=\"_blank\" rel=\"noreferrer\">Sensors 2021工况与传感器诊断研究</a>。本项目未复现文中模型、数据和成绩。</p></div></div>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "案例：为某采油站建立示功图异常初筛流程（教学情景）",
+      "lead": [
+        "假设某采油站每天收到一批抽油机井示功图，需要从中筛查正常、供液不足与阀漏三类形态。值班人员先查看模型给出的候选类别及相似样本，再优先复核疑似异常或依据不足的曲线。目标是让逐图判读有可检查的初筛依据。",
+        "本案例使用 **180 条合成训练样本、90 条独立合成测试样本**，每类分别为 60 条和 30 条。假设每条曲线包含完整冲程、仅有一种简化工况，且训练标签已知；这是一项教学实验，不代表某油田的实测数据。",
+        "验收关注异常类别的召回率、误判去向，以及噪声增加时结果是否稳定。以最近类中心作为对照，不预设准确率或节省工时；真实部署还需要按井独立验证。"
+      ],
+      "stats": [
+        [
+          "训练样本",
+          "180"
+        ],
+        [
+          "测试样本",
+          "90"
+        ],
+        [
+          "类别",
+          "3"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "采集并划分样本",
+          "role": "数据",
+          "do": "以完整冲程为输入，生成3类教学曲线；训练、测试、交互样本使用独立种子，测试标签只用于评价，不进入训练。",
+          "effect": "训练180条，测试90条，每类等量。",
+          "trap": "同一井的邻近样本不能随机分到训练和测试后声称跨井泛化。"
+        },
+        {
+          "name": "归一化与质控",
+          "role": "预处理",
+          "do": "检查载荷与位移是否有效；两轴分别减去最小值，再除以各自极差，缩放至0—1；拒绝非有限值与无变化曲线。",
+          "effect": "尺度可比较，去除不同量纲影响。",
+          "trap": "归一化也丢失绝对载荷信息。"
+        },
+        {
+          "name": "提取四维形态特征",
+          "role": "特征",
+          "do": "计算闭合面积，以及左、中、右三个区间的上下支平均间距。",
+          "effect": "曲线变成可解释数值向量。",
+          "trap": "特征无法完整保留所有局部振动信息。"
+        },
+        {
+          "name": "查找近邻并投票",
+          "role": "模型",
+          "do": "用训练集统计量标准化，按欧氏距离找到k个邻居并计票。",
+          "effect": "输出候选类别、邻居及票数支持率；结合最近距离形成复核依据。",
+          "trap": "投票比例不是校准概率；平票以类别顺序决定。"
+        },
+        {
+          "name": "评价并人工复核",
+          "role": "验收",
+          "do": "在同一测试集比较k近邻与最近类中心，统计混淆矩阵及F1。",
+          "effect": "从混淆矩阵查看真实类别被分到哪里；比较各类召回率和宏平均F1，优先复核低支持率或距离过大的样本。",
+          "trap": "不能把合成测试分数当成真实油田准确率。"
+        }
+      ],
+      "metrics": {
+        "title": "两个需要看懂的关键环节",
+        "html": "<style>\n.pump-split{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:28px;align-items:start;margin:16px 0}\n.pump-split figure{margin:0!important;max-width:720px!important;width:100%}\n.pump-split p{margin:0 0 12px}\n.panel:has(.pump-workflow) .case-lead{display:block}\n.panel:has(.pump-workflow) .case-lead>div:first-child{max-width:1000px}\n.panel:has(.pump-workflow) .case-cells{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:18px 0}\n.pump-workflow h4{font-size:15px;margin:0 0 12px;color:#235f51}\n.pump-workflow article+article{margin-top:28px;padding-top:24px;border-top:1px solid #e9e4d8}\n@media(max-width:900px){.pump-split{grid-template-columns:1fr;gap:12px}}\n@media(max-width:480px){.panel:has(.pump-workflow) .case-cells{grid-template-columns:1fr}}\n</style><div class=\"pump-workflow\"><article><h4>重点一：曲线如何变成四个数</h4><div class=\"pump-split\"><div><p>闭合曲线用鞋带公式计算面积；再在左、中、右三个区间内，对上下支的载荷差分别求平均。</p><p>三个区间为 [0.1, 0.35)、[0.35, 0.65)、[0.65, 0.9)，避开两端转折。四个数保留整体包络与局部收缩信息，但会损失细小波动。</p><p>这些值只描述形态，不包含真实类别。进入距离计算前，使用训练集的均值和标准差进行标准化。</p></div><figure style=\"margin:18px 0;max-width:620px\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 245\" role=\"img\" aria-label=\"特征结构示意，区间边界与代码一致；箭头仅表示间距，不是测量结果。\" style=\"display:block;width:100%;height:auto;background:#fdfcf9;border:1px solid #e9e4d8;border-radius:6px\"><defs><marker id=\"arrow\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#2f7d6b\"/></marker></defs><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"12\" fill=\"#4d565b\" stroke-linejoin=\"round\"><path d=\"M55 175V30M55 175H375\" stroke=\"#9ba3a9\" fill=\"none\"/>\n<path d=\"M55 160L75 45H350L375 160Z\" fill=\"#e6f1ec\" stroke=\"#2f7d6b\" stroke-width=\"2\"/>\n<path d=\"M87 45V175M167 45V175M263 45V175M343 45V175\" stroke=\"#b26a39\" stroke-dasharray=\"4 4\"/>\n<path d=\"M125 60V145M215 60V145M305 60V145\" stroke=\"#2f7d6b\" marker-start=\"url(#arrow)\" marker-end=\"url(#arrow)\"/>\n<text x=\"82\" y=\"194\">0.1</text><text x=\"155\" y=\"194\">0.35</text><text x=\"251\" y=\"194\">0.65</text><text x=\"334\" y=\"194\">0.9</text>\n<text x=\"109\" y=\"220\">左段</text><text x=\"199\" y=\"220\">中段</text><text x=\"289\" y=\"220\">右段</text>\n<text x=\"403\" y=\"65\">阴影 → 闭合面积 A</text><text x=\"403\" y=\"100\">双箭头 → 上下支间距</text><text x=\"403\" y=\"135\">各区间求平均</text><text x=\"403\" y=\"175\">向量 [A, 左, 中, 右]</text></g></svg><figcaption style=\"font-size:12px;line-height:1.6;color:#79828a;margin-top:8px\">特征结构示意，区间边界与代码一致；箭头仅表示间距，不是测量结果。</figcaption></figure></div></article><article><h4>重点二：分类结果如何转成人工复核依据</h4><div class=\"pump-split\"><div><p>操作人员需要同时查看当前曲线、邻居形态、类别票数与最近距离，判断结果是否有足够的样本支持。</p><p>演示中，支持率低于 0.8 或最近距离大于 2 会提示复核。这是教学规则，未经矿场验证；没有触发提示也不能保证判断正确。</p><p>异常类别用于安排复核优先级。最终工况及处理措施仍需结合现场信息确认。</p></div><figure style=\"margin:18px 0;max-width:620px\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 235\" role=\"img\" aria-label=\"复核依据示意：具体邻居、距离与支持率由案例演示实时计算。\" style=\"display:block;width:100%;height:auto;background:#fdfcf9;border:1px solid #e9e4d8;border-radius:6px\"><defs><marker id=\"arrow\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#2f7d6b\"/></marker></defs><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"12\" fill=\"#4d565b\" stroke-linejoin=\"round\"><rect x=\"20\" y=\"25\" width=\"170\" height=\"80\" rx=\"5\" fill=\"#f3f7f4\" stroke=\"#ddd7c8\"/><text x=\"36\" y=\"50\">当前曲线</text><path d=\"M38 88L47 65H160L172 88Z\" fill=\"none\" stroke=\"#2f7d6b\" stroke-width=\"2\"/>\n<path d=\"M195 65H225\" stroke=\"#2f7d6b\" marker-end=\"url(#arrow)\"/>\n<rect x=\"235\" y=\"25\" width=\"160\" height=\"80\" rx=\"5\" fill=\"#f3f7f4\" stroke=\"#ddd7c8\"/><text x=\"251\" y=\"52\">近邻样本与类别</text><text x=\"251\" y=\"80\">查看相似形态与距离</text>\n<path d=\"M400 65H430\" stroke=\"#2f7d6b\" marker-end=\"url(#arrow)\"/>\n<rect x=\"440\" y=\"25\" width=\"160\" height=\"80\" rx=\"5\" fill=\"#f3f7f4\" stroke=\"#ddd7c8\"/><text x=\"456\" y=\"52\">候选类别 + 支持率</text><text x=\"456\" y=\"80\">支持率不是概率</text>\n<path d=\"M520 110V140H320\" stroke=\"#b26a39\" fill=\"none\" marker-end=\"url(#arrow)\"/>\n<rect x=\"20\" y=\"150\" width=\"580\" height=\"62\" rx=\"5\" fill=\"#faf6ee\" stroke=\"#ddd7c8\"/><text x=\"38\" y=\"175\">低支持率 / 距离过大 → 优先人工复核</text><text x=\"38\" y=\"196\">结合原曲线、设备信息与现场记录确认，不能直接触发处置</text></g></svg><figcaption style=\"font-size:12px;line-height:1.6;color:#79828a;margin-top:8px\">复核依据示意：具体邻居、距离与支持率由案例演示实时计算。</figcaption></figure></div></article></div><p>准确率=正确数/测试数；召回率=该类识别正确数/该类真实数；宏平均F1为三类F1的算术平均。所有指标来自本次运行的预测，不预填成绩。可在案例演示中调整噪声与邻居数，观察这些指标的变化。</p>"
+      },
+      "fails": [
+        {
+          "name": "测试噪声超出训练范围",
+          "why": "邻居距离可能变大，模型可能仍自信地误判。"
+        },
+        {
+          "name": "真实复合故障",
+          "why": "本例只建模三种简化形态，不能识别所有实际工况。"
+        }
+      ]
+    },
+    "demo": {
+      "mode": "module",
+      "js": "demo/module.js",
+      "html": "demo/index.html",
+      "label": "案例演示",
+      "intro": "切换工况、改变噪声与邻居数，查看曲线、相似样本及独立测试成绩。"
+    }
+  }
+}

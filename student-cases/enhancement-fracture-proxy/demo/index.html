@@ -1,0 +1,13 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>压裂参数智能优化</title><link rel="stylesheet" href="demo.css"><body><main>
+<header><span class="eyebrow">FRACTURE DESIGN LAB</span><h1>用有限预算选择更合适的压裂参数</h1><p>二次回归代理模型 · 289个候选方案 · 合成产能指数与成本指数</p></header>
+<div class="grid"><aside class="card controls"><h2>设计条件</h2>
+<div><label for="budget">成本上限 <output id="budget-v"></output></label><input id="budget" type="range" min="30" max="125" step="1" value="75"></div>
+<div><label for="cap">支撑剂上限 <output id="cap-v"></output> t</label><input id="cap" type="range" min="40" max="360" step="10" value="240"></div>
+<div><label for="q">对比方案排量 <output id="q-v"></output> m³/min</label><input id="q" type="range" min="4" max="12" step=".5" value="8"></div>
+<div><label for="c">对比方案砂浓度 <output id="c-v"></output> kg/m³</label><input id="c" type="range" min="100" max="500" step="25" value="300"></div>
+<button id="apply">采用推荐参数</button><button id="next">更换训练样本</button><button id="reset">重置实验</button><p class="note">固定施工60分钟、同一假设储层。产能与成本均为教学指数；未计算真实裂缝扩展、施工压力或经济收益。</p></aside>
+<div><section class="card"><h2>约束下的推荐方案</h2><div id="headline" aria-live="polite"></div><p id="constraint" class="note"></p><div id="comparison"></div></section>
+<section class="card"><h2>成本—产能：哪些投入值得比较？</h2><p class="fine">灰点：满足支撑剂上限的候选；绿线：帕累托前沿；橙色虚线：预算。蓝点为你的方案，星号为预算内推荐。</p><div id="pareto"></div><p class="fine">前沿上的方案无法同时做到更低成本和更高预测产能。预算变化只改变选点，不重新训练模型。</p></section>
+<section class="card"><h2>排量 × 砂浓度响应地图</h2><p class="fine">越深绿预测产能越高；浅灰表示违反预算或支撑剂上限。点击格子可设为对比方案。</p><div id="heatmap"></div><p id="selection"></p></section>
+<section class="card"><h2>代理模型是否值得信任？</h2><div id="quality"></div><div id="validation"></div><p class="note">独立90条合成测试样本用于评价，不参与训练或推荐搜索。即使测试误差很小，也只说明拟合了本例合成关系，不能证明现场压裂效果。</p></section></div></div>
+</main><script src="model.js"></script><script src="demo.js"></script></body></html>

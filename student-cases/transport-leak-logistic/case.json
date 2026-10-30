@@ -1,0 +1,103 @@
+{
+  "id": "transport-leak-logistic",
+  "sceneId": "t1",
+  "title": "管道泄漏智能检测：多源证据与双端定位",
+  "methods": [
+    "ts"
+  ],
+  "version": "1.0.0",
+  "updated": "2026-10-23",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "看懂压力传播和净流量差，再区分泄漏识别与位置估计。",
+      "sections": [
+        {
+          "en": "PIPELINE",
+          "title": "压力扰动沿管线传播，传感器看到的是到达后的变化",
+          "html": "<style>\n.lesson-split{display:grid;grid-template-columns:minmax(0,42fr) minmax(0,58fr);gap:30px;align-items:start;max-width:1120px;margin:18px 0}\n.lesson-split figure{margin:0;max-width:620px;width:100%}.lesson-split svg{display:block;width:100%;height:auto;border:1px solid #e9e4d8;border-radius:6px;background:#fdfcf9}\n.sec4 .lesson-split p{font-size:14px;line-height:1.85;margin:0 0 12px}.lesson-split figcaption{font-size:12px;line-height:1.6;color:#79828a;margin-top:8px}\n.panel:has(.lesson-flow) .case-lead{display:block}.panel:has(.lesson-flow) .case-lead>div:first-child{max-width:1000px}.panel:has(.lesson-flow) .case-cells{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:18px 0}\n.lesson-flow h4{font-size:15px;color:#235f51}.lesson-end{display:grid;grid-template-columns:1fr 1fr;gap:30px;max-width:1120px}.lesson-end h4{font-size:15px;color:#235f51}.lesson-end p{font-size:14px!important}\n@media(max-width:900px){.lesson-split,.lesson-end{grid-template-columns:1fr;gap:16px}}@media(max-width:480px){.panel:has(.lesson-flow) .case-cells{grid-template-columns:1fr}}\n</style><div class=\"lesson-split\"><div><p>管段出现局部压力扰动时，变化可向两端传播。两端传感器记录的时间差，包含源点距离的信息；它们不是在同一时刻看见所有位置。</p><p>本例使用10 km直管段、两个同步端点传感器，生成波速固定为1000 m/s。图中的波前只解释教学传播，不输入识别模型。</p><p>没有模拟反射、支路和完整水力瞬变。真实流体速度、管材和介质条件都会影响传播，本例用单一波速突出到时差原理。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><text x=\"35\" y=\"35\">A端传感器</text><text x=\"475\" y=\"35\">B端传感器</text><path d=\"M50 110H570\" stroke=\"#d2dfd6\" stroke-width=\"24\"/><path d=\"M50 110H570\" stroke=\"#2f7d6b\" stroke-width=\"3\"/><circle cx=\"50\" cy=\"110\" r=\"9\" fill=\"#2f7d6b\"/><circle cx=\"570\" cy=\"110\" r=\"9\" fill=\"#41699b\"/><circle cx=\"270\" cy=\"110\" r=\"8\" fill=\"#b26a39\"/><path d=\"M250 75H125l12-7m-12 7 12 7M290 75H480l-12-7m12 7-12 7\" stroke=\"#8769a9\" stroke-width=\"2\" fill=\"none\"/><text x=\"220\" y=\"150\">单点压力扰动源</text><text x=\"45\" y=\"190\">0 km</text><text x=\"520\" y=\"190\">10 km</text><text x=\"35\" y=\"235\">波先到哪一端，取决于源点与两端的距离。</text></g></svg><figcaption>双向传播概念示意；位置、方向与时间在演示中联动。</figcaption></figure></div>"
+        },
+        {
+          "en": "EVIDENCE",
+          "title": "压降不一定是泄漏，还要看流量证据",
+          "html": "<div class=\"lesson-split\"><div><p>泵工况调整也可能导致两端压力下降。只用双端压降触发复核，可能把操作扰动误认为泄漏。</p><p>本例把两端压力降、净流量差变化和平均输量变化合成四个特征。逻辑回归从带标签的正常、操作与泄漏窗口学习区别。</p><p>净流量差在实际管线还受管存和仪表偏差影响，不能直接当作泄漏量。这里采用简化稳定尾段，便于观察多源证据的作用。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 260\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"25\" y=\"40\" width=\"570\" height=\"75\" rx=\"5\" fill=\"#e6efe5\"/><text x=\"42\" y=\"67\">泄漏教学情景</text><text x=\"42\" y=\"97\">双端压力下降 + 尾段净流量差持续增加</text><rect x=\"25\" y=\"135\" width=\"570\" height=\"75\" rx=\"5\" fill=\"#f1e7d8\"/><text x=\"42\" y=\"162\">工况调整教学情景</text><text x=\"42\" y=\"192\">双端也可能压降，但输量共同变化，净流量差较小</text><text x=\"25\" y=\"240\">现场管存和仪表偏差也会影响净流量差，不能直接等同漏量。</text></g></svg><figcaption>三种情景都有测量噪声；操作扰动单独计入误报评价。</figcaption></figure></div>"
+        },
+        {
+          "en": "LOCATION",
+          "title": "识别与定位是两件事，波速假设会改变答案",
+          "html": "<div class=\"lesson-split\"><div><p>分类模型只给出完整窗口的泄漏复核分数。定位则从两端压力曲线独立检出到时，再代入距离公式，不读取教学真值。</p><p>在忽略流体速度且波速恒定时，起始时间t₀可通过相减消去。得到的位置从A端起算，负到时差意味着更靠近A端。</p><p>演示允许把定位波速改成700—1300 m/s。原始信号不变，因此可以直接观察错误假设怎样影响位置，而不会混淆为信号变化。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M45 75H575\" stroke=\"#9ba3a9\" stroke-width=\"3\"/><circle cx=\"255\" cy=\"75\" r=\"7\" fill=\"#b26a39\"/><text x=\"30\" y=\"45\">A端</text><text x=\"550\" y=\"45\">B端</text><text x=\"140\" y=\"103\">距离 x</text><text x=\"385\" y=\"103\">距离 L − x</text><text x=\"45\" y=\"145\">tA = t₀ + x/c</text><text x=\"330\" y=\"145\">tB = t₀ + (L − x)/c</text><text x=\"45\" y=\"184\">相减消去未知起始时间：x = [L + c(tA − tB)] / 2</text><text x=\"45\" y=\"228\">分类分数决定是否复核；位置由到时差与波速假设计算。</text></g></svg><figcaption>公式采用本例的单管段恒定波速假设，不表示通用管网定位模型。</figcaption></figure></div>"
+        },
+        {
+          "en": "DATA & LIMITS",
+          "title": "完整窗口、独立数据与拒绝定位条件",
+          "html": "<div class=\"lesson-end\"><div><h4>480训练 / 180测试窗口</h4><p>训练包含正常、工况调整、泄漏各160个窗口；测试各60个，随机种子独立。每窗40秒、步长0.1秒。特征仅从压力与流量读数计算。</p><p>参考段0—8秒假设已确认健康。比较2—8秒与32—38秒均值，属于整窗分类，不是实时报警。</p></div><div><h4>依据不足时不强行给点</h4><p>两端到时检出采用噪声门槛、5点均值和连续3次超限。任一端未检出、分数低于阈值或位置落在管外时，不输出定位。</p><p>参考：<a href=\"https://www.mdpi.com/1424-8220/19/11/2548\">泄漏检测原理综述</a> · <a href=\"https://www.mdpi.com/2076-3417/13/7/4156\">负压波信号研究</a>。未复现论文方法或成绩。</p></div></div>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "案例：复核一段10 km管线的压降事件（教学情景）",
+      "lead": [
+        "假设监测组在一个40秒窗口内看见压降，需要判断它更像泄漏还是泵工况调整；若值得复核，再利用两端到时差寻找可能位置。",
+        "本例生成正常、工况调整、单点泄漏三种情景，训练各160窗，独立测试各60窗。传感器同步、首8秒健康、单一扰动与恒定波速都是明确教学假设。",
+        "验收不只看泄漏召回率，还看操作扰动误报和定位误差。弱信号无法可靠检出到时时，允许输出“不定位”，不编造精确位置。"
+      ],
+      "stats": [
+        [
+          "管段长度",
+          "10 km"
+        ],
+        [
+          "训练 / 测试",
+          "480 / 180窗"
+        ],
+        [
+          "窗口 / 采样",
+          "40 s / 0.1 s"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "整理同步信号窗口",
+          "do": "记录A/B端压力与流量，每窗40秒、0.1秒采样；开头8秒假设为健康参考。",
+          "effect": "给后续差分特征提供可比较基准。",
+          "trap": "时钟不同步或参考段已异常会破坏判断。"
+        },
+        {
+          "name": "提取四个观测特征",
+          "do": "比较2—8秒与32—38秒，得到两端压降、净流量差变化和平均输量变化。",
+          "effect": "把完整窗口压缩为可解释输入。",
+          "trap": "不能把净流量差直接解释为真实漏量。"
+        },
+        {
+          "name": "学习泄漏复核分数",
+          "do": "训练窗口标准化后拟合逻辑回归，区分泄漏与两类非泄漏；测试不参与训练。",
+          "effect": "用操作扰动样本学习压降之外的区别。",
+          "trap": "训练只见泄漏和健康、不见操作，可能造成较高误报。"
+        },
+        {
+          "name": "检出到时并估计位置",
+          "do": "从参考段噪声设门槛，5点均值连续3次超限确定到时；只在分数达阈值时输出管内位置。",
+          "effect": "得到独立于标签与真值的位置候选。",
+          "trap": "到时差、波速和时间同步误差会传递到定位。"
+        },
+        {
+          "name": "独立评价与复核",
+          "do": "比较180个测试窗口的混淆矩阵、操作误报与双端压降基线；当前泄漏情景另算定位误差。",
+          "effect": "同时观察分类可靠性与定位偏差。",
+          "trap": "不以少量教学窗口的结果宣称真实管线安全性能。"
+        }
+      ],
+      "metrics": {
+        "title": "两个需要看懂的关键环节",
+        "html": "<div class=\"lesson-flow\"><h4>时间窗口：分类器究竟看到了什么？</h4><div class=\"lesson-split\"><div><p>模型输入是四个观测特征，不是泄漏类型、位置或生成器的到达时间。正常与工况调整都属于非泄漏标签，但分别保留测试统计。</p><p>游标移动只用于读图，分类仍使用完整40秒窗口。因此本例不会报告在线报警延迟。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"30\" y=\"60\" width=\"112\" height=\"55\" fill=\"#d7e7dd\"/><rect x=\"142\" y=\"60\" width=\"336\" height=\"55\" fill=\"#edf0e9\"/><rect x=\"478\" y=\"60\" width=\"84\" height=\"55\" fill=\"#eee0c9\"/><path d=\"M30 125H590\" stroke=\"#9ba3a9\"/><text x=\"25\" y=\"145\">0</text><text x=\"130\" y=\"145\">8s</text><text x=\"465\" y=\"145\">32s</text><text x=\"548\" y=\"145\">38s</text><text x=\"576\" y=\"145\">40s</text><text x=\"40\" y=\"90\">健康参考</text><text x=\"260\" y=\"90\">扰动传播 / 过渡</text><text x=\"488\" y=\"90\">尾段</text><text x=\"30\" y=\"186\">特征：两端均值压降、净流量差变化、平均输量变化</text><text x=\"30\" y=\"225\">整窗分类，不能把最终分数当成窗口尚未结束时的在线报警。</text></g></svg><figcaption>健康参考段与尾段定义固定，不用真值寻找最有利的特征区间。</figcaption></figure></div><h4>定位资格：高分为什么仍可能没有位置？</h4><div class=\"lesson-split\"><div><p>高分只表示模型认为值得复核。压力到时还必须在两端可靠检出，并与管长和假设波速相容。</p><p>改变噪声可使到时检出失败；改变波速则可在相同信号下改变位置。这两个实验帮助区分观测不足与模型假设误差。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"25\" y=\"45\" width=\"170\" height=\"95\" rx=\"5\" fill=\"#e6efe5\"/><rect x=\"225\" y=\"45\" width=\"170\" height=\"95\" rx=\"5\" fill=\"#f1e7d8\"/><rect x=\"425\" y=\"45\" width=\"170\" height=\"95\" rx=\"5\" fill=\"#e5eaf1\"/><text x=\"44\" y=\"77\">分类分数过阈值？</text><text x=\"44\" y=\"111\">否 → 不输出定位</text><text x=\"244\" y=\"77\">双端到时可靠？</text><text x=\"244\" y=\"111\">否 → 暂不定位</text><text x=\"444\" y=\"77\">位置在管段内？</text><text x=\"444\" y=\"111\">是 → 复核候选点</text><path d=\"M196 93H220M396 93H420\" stroke=\"#79828a\" stroke-width=\"2\"/><text x=\"30\" y=\"190\">到时误差和波速误差会传播到位置，不能只报告分类分数。</text><text x=\"30\" y=\"225\">所有输出仅为教学估计，不替代管线安全监测系统。</text></g></svg><figcaption>位置判断依赖信号和假设，不把教学位置直接传给定位函数。</figcaption></figure></div></div>"
+      }
+    },
+    "demo": {
+      "mode": "module",
+      "js": "demo/module.js",
+      "html": "demo/index.html",
+      "label": "案例演示"
+    }
+  }
+}

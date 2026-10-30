@@ -1,0 +1,104 @@
+{
+  "id": "drilling-rop-knn",
+  "sceneId": "d1",
+  "title": "钻速预测与参数优化：地层差异与扭矩约束",
+  "methods": [
+    "ts",
+    "opt"
+  ],
+  "version": "1.0.0",
+  "updated": "2026-10-24",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "用钻压、转速、地层和扭矩把一个提速问题讲具体。",
+      "sections": [
+        {
+          "en": "DRILLING",
+          "title": "钻得更快需要先解释哪些量",
+          "html": "<style>\n.lesson-split{display:grid;grid-template-columns:minmax(0,42fr) minmax(0,58fr);gap:30px;align-items:start;max-width:1120px;margin:18px 0}\n.lesson-split figure{margin:0;max-width:620px;width:100%}.lesson-split svg{display:block;width:100%;height:auto;border:1px solid #e9e4d8;border-radius:6px;background:#fdfcf9}\n.sec4 .lesson-split p{font-size:14px;line-height:1.85;margin:0 0 12px}.lesson-split figcaption{font-size:12px;line-height:1.6;color:#79828a;margin-top:8px}\n.panel:has(.lesson-flow) .case-lead{display:block}.panel:has(.lesson-flow) .case-lead>div:first-child{max-width:1000px}.panel:has(.lesson-flow) .case-cells{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:18px 0}\n.lesson-flow h4{font-size:15px;color:#235f51}.lesson-end{display:grid;grid-template-columns:1fr 1fr;gap:30px;max-width:1120px}.lesson-end h4{font-size:15px;color:#235f51}.lesson-end p{font-size:14px!important}\n@media(max-width:900px){.lesson-split,.lesson-end{grid-template-columns:1fr;gap:16px}}@media(max-width:480px){.panel:has(.lesson-flow) .case-cells{grid-template-columns:1fr}}\n</style><div class=\"lesson-split\"><div><p>机械钻速表示钻头向下破碎岩石、加深井眼的速度，常用m/h。它只描述钻进过程，不等于包含停机、起下钻和接单根的总施工效率。</p><p>钻压是作用在钻头上的轴向载荷，转速是单位时间旋转圈数。改变它们会影响破岩，也会改变扭矩等响应；不能简单地认为越大越好。</p><p>右图用钻头、载荷方向和转动方向帮助区分这两个输入。本例固定钻头和其他钻井条件，仅演示两项参数如何影响合成钻速。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 280\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"45\" y=\"90\" width=\"530\" height=\"135\" fill=\"#eee8dc\"/><path d=\"M250 35V160\" stroke=\"#8c9991\" stroke-width=\"25\"/><path d=\"M215 160H285L275 185H225Z\" fill=\"#2e7b66\"/><path d=\"M310 50V120l-7-10m7 10 7-10\" stroke=\"#b67732\" stroke-width=\"2\" fill=\"none\"/><path d=\"M200 65Q180 25 225 25\" fill=\"none\" stroke=\"#426fa6\" stroke-width=\"2\"/><text x=\"330\" y=\"80\">钻压 W · kN</text><text x=\"40\" y=\"35\">转速 R · r/min</text><text x=\"330\" y=\"145\">钻头破碎岩石</text><path d=\"M250 190V225\" stroke=\"#2e7b66\" stroke-width=\"2\"/><text x=\"40\" y=\"260\">机械钻速 = 钻进长度 / 纯钻进时间 · m/h</text></g></svg><figcaption>结构为概念简图；没有建模钻头齿、井壁稳定或复杂井下振动。</figcaption></figure></div>"
+        },
+        {
+          "en": "FORMATION",
+          "title": "相同参数在软硬地层中并不等价",
+          "html": "<div class=\"lesson-split\"><div><p>岩石性质改变时，原来有效的参数组合可能不再合适。本例把地层简化为较软与较硬两类，并为它们设置不同的合成钻速响应。</p><p>演示中切换地层，使用对应类别的训练样本预测。固定转速的响应曲线同时画出两种地层，方便比较同一钻压下的预测差异。</p><p>地层类型被视为已知条件，不是模型自动识别出的岩性。真实钻井中还需要考虑钻头磨损、钻井液、井深、振动等因素，这些都没有被两条教学曲线覆盖。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 295\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M55 35V215H570\" fill=\"none\" stroke=\"#aab7ae\"/><path d=\"M70 190Q270 65 550 60\" stroke=\"#2e7b66\" stroke-width=\"3\" fill=\"none\"/><path d=\"M70 205Q260 140 550 125\" stroke=\"#426fa6\" stroke-width=\"3\" fill=\"none\"/><text x=\"350\" y=\"48\">较软地层</text><text x=\"400\" y=\"155\">较硬地层</text><text x=\"25\" y=\"25\">钻速 ↑</text><text x=\"470\" y=\"240\">钻压 →</text><text x=\"50\" y=\"275\">固定转速与其他条件后比较；曲线为定性示意。</text></g></svg><figcaption>图中曲线只表示定性趋势；演示曲线由近邻模型实际计算。</figcaption></figure></div>"
+        },
+        {
+          "en": "NEIGHBORS",
+          "title": "推荐参数要能追溯到相似记录",
+          "html": "<div class=\"lesson-split\"><div><p>近邻回归先筛选相同地层，再比较钻压和转速的归一化距离。每次选12条相似记录，按1/(距离+0.03)加权平均其观测钻速。</p><p>演示直接列出这12条记录、钻速和归一权重，读者可以看到预测值来自哪里。与分类投票不同，这里的权重用于连续数值平均。</p><p>模型只在钻压60—180 kN、转速60—180 r/min的网格内搜索。扭矩先用简化公式筛选，随后才比较钻速；如果没有可行点，页面明确提示而不输出伪推荐。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 270\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M50 35V225H570\" fill=\"none\" stroke=\"#aab7ae\"/><circle cx=\"280\" cy=\"130\" r=\"70\" fill=\"#e4eee6\" stroke=\"#2e7b66\" stroke-dasharray=\"5 4\"/><g fill=\"#2e7b66\"><circle cx=\"245\" cy=\"105\" r=\"5\"/><circle cx=\"310\" cy=\"110\" r=\"5\"/><circle cx=\"250\" cy=\"155\" r=\"5\"/><circle cx=\"315\" cy=\"160\" r=\"5\"/></g><g fill=\"#aeb7ae\"><circle cx=\"140\" cy=\"185\" r=\"5\"/><circle cx=\"430\" cy=\"65\" r=\"5\"/><circle cx=\"480\" cy=\"185\" r=\"5\"/></g><path d=\"M272 130H288M280 122V138\" stroke=\"#b67732\" stroke-width=\"3\"/><text x=\"355\" y=\"120\">当前候选参数</text><text x=\"355\" y=\"150\">同地层12个近邻</text><text x=\"355\" y=\"180\">越相近权重越大</text><text x=\"20\" y=\"25\">转速 ↑</text><text x=\"460\" y=\"250\">钻压 →</text></g></svg><figcaption>坐标都按120的输入跨度归一化；散点仅说明近邻关系。</figcaption></figure></div>"
+        },
+        {
+          "en": "DATA AND LIMITS",
+          "title": "可重复实验与适用边界",
+          "html": "<div class=\"lesson-end\"><div><h4>合成数据定义</h4><p>训练320条、测试160条，两类地层各占一半，使用独立固定种子。令x=(W−120)/60，z=(R−120)/60；软地层钻速为42+15x+12z−8x²−6z²+3xz，硬地层为30+10x+7z−8x²−6z²+3xz，再叠加零均值扰动。</p><p>扭矩T=(3+0.045W+0.012R)×(1+0.4h)，h为硬地层标记。这是教学公式，不是设备额定曲线。</p></div><div><h4>尚未覆盖的现场因素</h4><p>模型没有验证真实井资料，未约束泵压、钻柱疲劳、卡钻或井壁稳定。30 m预测用时不含非钻进时间，不据此承诺节省施工周期。</p><p>术语参考：<a href=\"https://glossary.slb.com/terms/r/rate_of_penetration\">SLB 机械钻速</a>。数学响应与扭矩公式为本案例自行设定。</p></div></div>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "案例：为下一段30 m钻进比较参数组合（教学情景）",
+      "lead": [
+        "假设钻井班组已知下一段属于较软或较硬地层，需要比较钻压和转速，而不是单纯追求最大转速。目标是在教学扭矩上限内，选择预测钻速较高的参数组合。",
+        "用320条合成记录建立近邻回归，另以160条独立记录评价。候选钻压与转速均从60到180、步长10，共169个组合；每次都保留当前手动方案供比较。",
+        "默认较软地层、钻压100 kN、转速100 r/min、扭矩上限12 kN·m。切换地层和收紧上限，观察推荐为何改变，以及哪些条件会导致没有可行方案。"
+      ],
+      "stats": [
+        [
+          "训练 / 测试",
+          "320 / 160条"
+        ],
+        [
+          "候选参数组合",
+          "169组"
+        ],
+        [
+          "同地层近邻",
+          "12条"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "确定相同条件下的比较任务",
+          "do": "假设司钻要比较下一段30 m的参数；固定钻头与其他工况，给定软/硬地层和扭矩上限。",
+          "effect": "把提速目标转成有条件的候选方案比较。",
+          "trap": "30 m用时不等于完整作业周期。"
+        },
+        {
+          "name": "建立独立训练与评价记录",
+          "do": "生成320条训练与160条测试记录，软硬地层各半；记录钻压、转速与观测钻速。",
+          "effect": "得到可重复、可追溯的教学数据。",
+          "trap": "不能将模拟记录描述为真实井段历史。"
+        },
+        {
+          "name": "用同地层相似记录回归",
+          "do": "钻压与转速按120跨度归一化，选12个近邻，距离越小权重越大。",
+          "effect": "输出钻速预测和12条依据记录。",
+          "trap": "样本覆盖边界附近预测更容易受到邻居分布影响。"
+        },
+        {
+          "name": "先检查误差再搜索参数",
+          "do": "在固定测试集上计算MAE，与按地层取训练均值的基线比较；搜索13×13个候选点。",
+          "effect": "观察模型是否学习到参数变化信息。",
+          "trap": "低模拟误差不能证明真实井的泛化性能。"
+        },
+        {
+          "name": "筛选约束并对比方案",
+          "do": "按简化扭矩剔除超限点，从剩余点选预测钻速最高者；同分时优先低扭矩。",
+          "effect": "显示当前、推荐的钻速、扭矩与30 m预测用时。",
+          "trap": "没有可行点时不能推荐超限方案；推荐还需现场复核。"
+        }
+      ],
+      "metrics": {
+        "title": "两处值得查看的计算依据",
+        "html": "<div class=\"lesson-flow\"><h4>相似记录怎样合成一个预测值</h4><div class=\"lesson-split\"><div><p>两项参数单位不同，先按各自跨度归一化再计算欧氏距离。同地层的12个近邻按1/(d+0.03)加权，最终除以权重总和。</p><p>界面中给出所有近邻与权重条；改变手动参数时，样本选择与预测同步变化。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 270\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M50 35V225H570\" fill=\"none\" stroke=\"#aab7ae\"/><circle cx=\"280\" cy=\"130\" r=\"70\" fill=\"#e4eee6\" stroke=\"#2e7b66\" stroke-dasharray=\"5 4\"/><g fill=\"#2e7b66\"><circle cx=\"245\" cy=\"105\" r=\"5\"/><circle cx=\"310\" cy=\"110\" r=\"5\"/><circle cx=\"250\" cy=\"155\" r=\"5\"/><circle cx=\"315\" cy=\"160\" r=\"5\"/></g><g fill=\"#aeb7ae\"><circle cx=\"140\" cy=\"185\" r=\"5\"/><circle cx=\"430\" cy=\"65\" r=\"5\"/><circle cx=\"480\" cy=\"185\" r=\"5\"/></g><path d=\"M272 130H288M280 122V138\" stroke=\"#b67732\" stroke-width=\"3\"/><text x=\"355\" y=\"120\">当前候选参数</text><text x=\"355\" y=\"150\">同地层12个近邻</text><text x=\"355\" y=\"180\">越相近权重越大</text><text x=\"20\" y=\"25\">转速 ↑</text><text x=\"460\" y=\"250\">钻压 →</text></g></svg><figcaption>权重不是故障概率，也不是分类投票。</figcaption></figure></div><h4>先满足扭矩约束，再比较钻速</h4><div class=\"lesson-split\"><div><p>每个网格点都计算教学扭矩与预测钻速。超限点显示为灰色，仍可点击查看，但不会被推荐。</p><p>软硬地层的扭矩响应不同，因此相同扭矩上限下，可行区域与最优参数都可能变化。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 270\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M50 35V220H570\" fill=\"none\" stroke=\"#aab7ae\"/><path d=\"M50 70L450 220H50Z\" fill=\"#dcece1\"/><path d=\"M50 70L450 220\" stroke=\"#b67732\" stroke-width=\"2\"/><text x=\"80\" y=\"185\">扭矩允许范围</text><text x=\"290\" y=\"75\">扭矩超限</text><circle cx=\"290\" cy=\"165\" r=\"7\" fill=\"#2e7b66\"/><text x=\"305\" y=\"155\">在可行点中比较预测钻速</text><text x=\"20\" y=\"25\">转速 ↑</text><text x=\"470\" y=\"250\">钻压 →</text></g></svg><figcaption>绿色可行区域仅依据简化扭矩公式，不能作为现场安全许可。</figcaption></figure></div></div>"
+      }
+    },
+    "demo": {
+      "mode": "module",
+      "js": "demo/module.js",
+      "html": "demo/index.html",
+      "label": "案例演示"
+    }
+  }
+}

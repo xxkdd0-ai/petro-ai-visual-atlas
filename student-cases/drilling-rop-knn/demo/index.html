@@ -1,0 +1,14 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>钻速预测与参数优化</title><link rel="stylesheet" href="demo.css"><body><main>
+<header><span class="eyebrow">DRILLING RESPONSE LAB</span><h1>同样的钻压与转速，换一种地层会怎样？</h1><p>近邻回归 · 软硬地层对照 · 扭矩约束下的169组候选参数</p></header>
+<div class="grid"><aside class="card controls"><h2>钻进条件</h2>
+<div><label for="rock">假设地层</label><select id="rock"><option value="0">较软地层</option><option value="1">较硬地层</option></select></div>
+<div><label for="wob">对比钻压 <output id="wob-v"></output> kN</label><input id="wob" type="range" min="60" max="180" step="10" value="100"></div>
+<div><label for="rpm">对比转速 <output id="rpm-v"></output> r/min</label><input id="rpm" type="range" min="60" max="180" step="10" value="100"></div>
+<div><label for="cap">扭矩上限 <output id="cap-v"></output> kN·m</label><input id="cap" type="range" min="6" max="20" step=".5" value="12"></div>
+<button id="apply">采用推荐参数</button><button id="next">更换训练样本</button><button id="reset">重置实验</button><p class="note">320条训练记录、160条固定测试记录。地层是已知条件，不由模型识别。扭矩使用简化公式，不代表现场安全限值。</p></aside>
+<div><section class="card"><h2>当前方案与约束内推荐</h2><div id="headline" aria-live="polite"></div><p id="constraint" class="note"></p><div id="comparison"></div></section>
+<section class="card"><h2>固定转速后，钻压怎样影响钻速？</h2><p class="fine">同一转速下，绿线为软地层、蓝线为硬地层；圆点是当前方案的预测值。邻近样本变化会使曲线出现小幅起伏。</p><div id="response"></div></section>
+<section class="card"><h2>钻压与转速的可行范围</h2><p class="fine">深绿表示预测钻速较高，灰格表示扭矩超限；圆圈为当前方案，星号为推荐。点击格子改变对比参数。</p><div id="heatmap"></div></section>
+<section class="card"><h2>模型依据是哪些相似记录？</h2><div id="neighbors"></div><p class="fine">同地层的12条近邻，按归一化钻压与转速距离加权回归；横条表示权重，不表示类别投票。</p></section>
+<section class="card"><h2>独立测试能否优于简单基线？</h2><div id="quality"></div><div id="validation"></div><p class="note">基线为训练集内相同地层的平均钻速。测试指标来自合成记录；30 m用时只按长度/预测钻速计算，未计入接单根、起下钻与停机时间。</p></section></div></div>
+</main><script src="model.js"></script><script src="demo.js"></script></body></html>

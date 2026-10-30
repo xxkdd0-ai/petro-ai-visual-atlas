@@ -1,0 +1,103 @@
+{
+  "id": "enhancement-fracture-proxy",
+  "sceneId": "e1",
+  "title": "压裂参数智能优化：代理模型与成本产能权衡",
+  "methods": [
+    "opt"
+  ],
+  "version": "1.0.0",
+  "updated": "2026-10-23",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "把施工参数、资源消耗与产能响应连起来，理解优化结果为什么受约束。",
+      "sections": [
+        {
+          "en": "FRACTURE",
+          "title": "为什么要把裂缝与井筒连起来？",
+          "html": "<style>\n.lesson-split{display:grid;grid-template-columns:minmax(0,42fr) minmax(0,58fr);gap:30px;align-items:start;max-width:1120px;margin:18px 0}\n.lesson-split figure{margin:0;max-width:620px;width:100%}.lesson-split svg{display:block;width:100%;height:auto;border:1px solid #e9e4d8;border-radius:6px;background:#fdfcf9}\n.sec4 .lesson-split p{font-size:14px;line-height:1.85;margin:0 0 12px}.lesson-split figcaption{font-size:12px;line-height:1.6;color:#79828a;margin-top:8px}\n.panel:has(.lesson-flow) .case-lead{display:block}.panel:has(.lesson-flow) .case-lead>div:first-child{max-width:1000px}.panel:has(.lesson-flow) .case-cells{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:18px 0}\n.lesson-flow h4{font-size:15px;color:#235f51}.lesson-end{display:grid;grid-template-columns:1fr 1fr;gap:30px;max-width:1120px}.lesson-end h4{font-size:15px;color:#235f51}.lesson-end p{font-size:14px!important}\n@media(max-width:900px){.lesson-split,.lesson-end{grid-template-columns:1fr;gap:16px}}@media(max-width:480px){.panel:has(.lesson-flow) .case-cells{grid-template-columns:1fr}}\n</style><div class=\"lesson-split\"><div><p>压裂通过高压注入流体使岩层产生或扩展裂缝，建立储层与井筒之间的流动通道。支撑剂进入裂缝后帮助保持导流空间。</p><p>实际效果受地应力、岩石性质、流体、支撑剂运移等因素影响。裂缝更大并不自动等于经济效果更好，还需要考虑投入与有效导流能力。</p><p>本例固定储层背景，关注如何从施工参数的合成响应中学习规律。右图仅解释井筒、裂缝和支撑剂关系，不表示计算出的裂缝形态或长度。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 265\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"30\" y=\"35\" width=\"560\" height=\"175\" fill=\"#eee6d8\"/><path d=\"M30 100H590M30 160H590\" stroke=\"#d4c7b3\"/><path d=\"M310 20V230\" stroke=\"#7d8982\" stroke-width=\"12\"/><path d=\"M95 130Q210 90 305 125Q420 90 530 130Q420 150 305 135Q200 150 95 130\" fill=\"#d3e6dc\" stroke=\"#2e7b66\" stroke-width=\"2\"/><g fill=\"#b67732\"><circle cx=\"230\" cy=\"126\" r=\"4\"/><circle cx=\"265\" cy=\"128\" r=\"4\"/><circle cx=\"350\" cy=\"128\" r=\"4\"/><circle cx=\"390\" cy=\"126\" r=\"4\"/></g><text x=\"40\" y=\"65\">储层</text><text x=\"335\" y=\"40\">井筒</text><text x=\"40\" y=\"240\">绿色：裂缝通道　棕色：支撑剂　几何仅为概念示意</text></g></svg><figcaption>压裂连通概念图；未求解岩石破裂与裂缝扩展方程。</figcaption></figure></div>"
+        },
+        {
+          "en": "PARAMETERS",
+          "title": "排量和砂浓度怎样转成资源约束？",
+          "html": "<div class=\"lesson-split\"><div><p>排量表示单位时间注入的液体体积；砂浓度表示每立方米液体携带的支撑剂质量。两者是不同量，不能只看其中一个就判断总砂量。</p><p>教学情景固定施工60分钟，液量为60q，总砂量为60qc/1000吨。增大排量会同时增加液量与砂量，因此可能触碰预算或支撑剂上限。</p><p>演示把成本简化为20 + 0.055V + 0.18M的无量纲指数。系数仅用来呈现取舍，不代表市场报价；也未建模压力、泵功率和施工安全约束。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"30\" y=\"40\" width=\"250\" height=\"155\" rx=\"6\" fill=\"#e5efe8\"/><rect x=\"330\" y=\"40\" width=\"260\" height=\"155\" rx=\"6\" fill=\"#f3e9da\"/><text x=\"50\" y=\"70\">排量 q · m³/min</text><text x=\"50\" y=\"105\">固定60 min → 液量 V = 60q</text><text x=\"50\" y=\"140\">影响输送条件与资源消耗</text><text x=\"50\" y=\"175\">本例搜索4—12</text><text x=\"350\" y=\"70\">砂浓度 c · kg/m³</text><text x=\"350\" y=\"105\">砂量 M = Vc / 1000 t</text><text x=\"350\" y=\"140\">与液量一起决定总砂量</text><text x=\"350\" y=\"175\">本例搜索100—500</text><text x=\"30\" y=\"235\">砂浓度是质量/液体体积，本例没有把它称为体积砂比。</text></g></svg><figcaption>单位换算可以追溯；教学上限不是现场施工标准。</figcaption></figure></div>"
+        },
+        {
+          "en": "TRADE-OFF",
+          "title": "智能优化要解释取舍，而不只给一个数",
+          "html": "<div class=\"lesson-split\"><div><p>代理模型用历史或模拟样本学习参数与响应的映射。本例实际拟合二次回归，包括平方项与交互项，再对289个参数组合计算预测。</p><p>如果另一个方案成本更低且产能不差，当前方案就不值得优先选择。保留下来的非支配方案构成帕累托前沿，展示提高产能需要增加多少投入。</p><p>推荐规则是在预算和总砂量约束内选择预测产能最高的网格点。预算提高后推荐可能不再改变；这体现本例的边际收益递减，而非真实油藏的定量结论。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 275\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M55 30V210H565\" fill=\"none\" stroke=\"#9ba9a0\"/><path d=\"M100 185L170 145L250 110L350 85L480 70\" fill=\"none\" stroke=\"#2e7b66\" stroke-width=\"3\"/><g fill=\"#b5bfb7\"><circle cx=\"250\" cy=\"160\" r=\"5\"/><circle cx=\"350\" cy=\"140\" r=\"5\"/><circle cx=\"450\" cy=\"120\" r=\"5\"/></g><path d=\"M305 30V210\" stroke=\"#b67732\" stroke-dasharray=\"5 4\"/><text x=\"65\" y=\"25\">产能 ↑</text><text x=\"495\" y=\"235\">成本 →</text><text x=\"320\" y=\"45\">预算边界</text><text x=\"360\" y=\"185\">灰点：存在更优替代</text><text x=\"65\" y=\"255\">前沿不是唯一最优；预算约束决定当前推荐点。</text></g></svg><figcaption>前沿由当前预测实时计算；最优范围仅限本例离散网格。</figcaption></figure></div>"
+        },
+        {
+          "en": "DATA & LIMITS",
+          "title": "数据来源与使用边界",
+          "html": "<div class=\"lesson-end\"><div><h4>可重复的合成实验</h4><p>180条训练记录、90条独立测试记录均由固定种子生成。归一化变量x=(q−8)/4、z=(c−300)/200；合成无噪声指数为100+22x+18z−18x²−15z²+8xz，叠加零均值扰动。</p><p>回归只读取训练数据。默认训练种子42001、测试种子87001；更换训练样本保持测试集固定，便于比较拟合波动。</p></div><div><h4>可解释，但不冒充现场设计</h4><p>没有使用商业压裂模拟器，也没有现场增产承诺。真实工程须补充可靠仿真或实测资料、地质不确定性以及施工约束。</p><p>背景参考：<a href=\"https://www.slb.com/resource-library/oilfield-review/defining-series/defining-hydraulic-fracturing\">SLB：水力压裂基础</a>；<a href=\"https://glossary.slb.com/terms/f/frac_job\">SLB：压裂作业术语</a>。</p></div></div>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "案例：为固定储层筛选一组预算内压裂参数（教学情景）",
+      "lead": [
+        "假设设计组在同一储层条件下比较60分钟施工方案，需要同时决定排量和砂浓度。目标是在成本指数上限与可用支撑剂范围内，提高预测产能指数，并保留方案比较依据。",
+        "本例用180条合成记录训练二次代理，另留90条记录验证；不声称这些记录来自真实油田或压裂软件。参数网格覆盖4—12 m³/min和100—500 kg/m³，共289种组合。",
+        "默认预算75、支撑剂上限240 t；以8 m³/min与300 kg/m³作为手动对比起点。验收检查模型误差、推荐是否满足约束，以及无可行解时是否明确提示。"
+      ],
+      "stats": [
+        [
+          "训练 / 测试",
+          "180 / 90条"
+        ],
+        [
+          "候选参数组合",
+          "289组"
+        ],
+        [
+          "固定施工时长",
+          "60 min"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "建立有边界的教学设计空间",
+          "do": "固定储层与60分钟施工时间，排量4—12、砂浓度100—500；生成180条训练记录和90条独立测试记录。",
+          "effect": "明确单位、响应来源和适用范围。",
+          "trap": "合成函数不等于物理压裂模拟器。"
+        },
+        {
+          "name": "拟合二次代理模型",
+          "do": "以常数、两项一次项、两项平方项和交互项回归产能指数；非截距系数加0.01正则。",
+          "effect": "模型可以学习曲率和参数交互。",
+          "trap": "不可借测试标签调整训练结果。"
+        },
+        {
+          "name": "在独立样本上检查误差",
+          "do": "绘制90条测试记录的观测—预测散点，计算平均绝对误差MAE。",
+          "effect": "查看模型拟合是否明显偏离合成观测。",
+          "trap": "低误差仅说明拟合本例分布，不能证明现场可靠性。"
+        },
+        {
+          "name": "筛选约束并构造前沿",
+          "do": "排量步长0.5、砂浓度步长25，共289点；计算砂量和成本，移除超上限方案。",
+          "effect": "形成满足砂量约束的成本—产能前沿。",
+          "trap": "前沿与预算内推荐是两个概念，不应混淆。"
+        },
+        {
+          "name": "比较方案并解释推荐",
+          "do": "预算内按预测产能排序，平局选成本较低者；与手动参数比较，展示成本、液量和砂量。",
+          "effect": "用热图定位参数组合，用前沿解释投入与收益。",
+          "trap": "没有可行点时必须调整约束，不能返回伪最优解。"
+        }
+      ],
+      "metrics": {
+        "title": "两个需要单独理解的环节",
+        "html": "<div class=\"lesson-flow\"><h4>从样本到代理：先检查拟合再搜索</h4><div class=\"lesson-split\"><div><p>训练使用归一化参数的六项二次特征，不使用测试标签。模型表达的是响应曲面，而不是阈值规则。</p><p>更换训练样本会改变拟合系数和推荐，测试集保持固定。调整预算和砂量上限只影响筛选，不影响训练。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"25\" y=\"45\" width=\"160\" height=\"130\" fill=\"#e5efe8\"/><rect x=\"225\" y=\"45\" width=\"170\" height=\"130\" fill=\"#f1eadc\"/><rect x=\"435\" y=\"45\" width=\"160\" height=\"130\" fill=\"#e5eaf1\"/><text x=\"40\" y=\"75\">180条训练样本</text><text x=\"40\" y=\"110\">排量、砂浓度</text><text x=\"40\" y=\"145\">合成产能响应</text><text x=\"240\" y=\"75\">六项二次回归</text><text x=\"240\" y=\"110\">常数、x、z</text><text x=\"240\" y=\"145\">x²、z²、xz</text><text x=\"450\" y=\"75\">90条独立测试</text><text x=\"450\" y=\"110\">计算MAE</text><text x=\"450\" y=\"145\">绘制预测散点</text><path d=\"M185 110H225M395 110H435\" stroke=\"#7d8d82\"/><text x=\"25\" y=\"225\">测试标签只参与评价，不参与拟合或候选方案排序。</text></g></svg><figcaption>真实工程还需要检验样本覆盖、仿真保真度与外推风险。</figcaption></figure></div><h4>从前沿到推荐：预算提供选择依据</h4><div class=\"lesson-split\"><div><p>先在支撑剂上限内寻找非支配方案，再选择预算内产能最高者。前沿保留预算外的点，让人看见增加投入可能带来的变化。</p><p>热图显示全部289个组合，可点击任意格与推荐比较。违反约束的手动方案仍显示数值，但不会被推荐。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 275\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M55 30V210H565\" fill=\"none\" stroke=\"#9ba9a0\"/><path d=\"M100 185L170 145L250 110L350 85L480 70\" fill=\"none\" stroke=\"#2e7b66\" stroke-width=\"3\"/><g fill=\"#b5bfb7\"><circle cx=\"250\" cy=\"160\" r=\"5\"/><circle cx=\"350\" cy=\"140\" r=\"5\"/><circle cx=\"450\" cy=\"120\" r=\"5\"/></g><path d=\"M305 30V210\" stroke=\"#b67732\" stroke-dasharray=\"5 4\"/><text x=\"65\" y=\"25\">产能 ↑</text><text x=\"495\" y=\"235\">成本 →</text><text x=\"320\" y=\"45\">预算边界</text><text x=\"360\" y=\"185\">灰点：存在更优替代</text><text x=\"65\" y=\"255\">前沿不是唯一最优；预算约束决定当前推荐点。</text></g></svg><figcaption>成本与产能均为教学指数，不能换算为现场投入产出回报。</figcaption></figure></div></div>"
+      }
+    },
+    "demo": {
+      "mode": "module",
+      "js": "demo/module.js",
+      "html": "demo/index.html",
+      "label": "案例演示"
+    }
+  }
+}

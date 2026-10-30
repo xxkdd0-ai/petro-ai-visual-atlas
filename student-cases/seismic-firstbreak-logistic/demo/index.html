@@ -1,0 +1,13 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>初至波自动拾取</title><link rel="stylesheet" href="demo.css"><body><main>
+<header><span class="eyebrow">FIRST BREAK LAB</span><h1>从一炮波形中找出最早到达的能量</h1><p>学习型候选检测 · STA/LTA对照 · 24道独立合成测试波形</p></header>
+<div class="grid"><aside class="card controls"><h2>拾取实验</h2>
+<div><label for="noise">噪声幅度 <output id="noise-v"></output></label><input id="noise" type="range" min=".05" max=".8" step=".05" value=".2"></div>
+<div><label for="threshold">候选接受阈值 <output id="threshold-v"></output></label><input id="threshold" type="range" min=".35" max=".95" step=".05" value=".65"></div>
+<div><label for="trace">查看第 <output id="trace-v"></output> 道</label><input id="trace" type="range" min="1" max="24" step="1" value="12"></div>
+<label><input id="spikes" type="checkbox" checked> 加入脉冲干扰</label><label><input id="truth" type="checkbox" checked> 显示教学真值</label>
+<button id="next">换一炮测试波形</button><button id="reset">重置实验</button><p class="note">120道训练波形固定，调整测试噪声不会重新训练。检测器使用前后窗口，属于离线拾取，不是实时预警。</p></aside>
+<div><section class="card"><h2>整炮拾取质量</h2><div id="summary" aria-live="polite"></div><p class="fine">命中定义：与合成初至相差不超过8 ms。平均误差只统计已拾取道，漏拾另列，不能单独用平均误差判断优劣。</p><div id="metrics"></div></section>
+<section class="card"><h2>炮集与初至走时</h2><p class="fine">横轴：道号；纵轴：时间向下。绿色圆点为学习型拾取，棕色方点为STA/LTA，蓝色虚线为教学真值。点击任意一列选道。</p><div id="gather"></div></section>
+<section class="card"><h2>单道复核</h2><div id="current"></div><div id="wave"></div><h3>候选分数与接受阈值</h3><div id="scores"></div><p class="note">绿色分数由训练得到的逻辑回归计算，不是经现场校准的正确概率。取搜索区间最高分候选，低于阈值则拒绝；低分或与能量比法分歧的道值得复核。</p></section>
+<section class="card"><h2>错误分布比一个总分更有用</h2><div id="errors"></div><p class="fine">“提前”和“滞后”指超出±8 ms容差的拾取；本例没有邻道平滑，保留原始错误便于观察。</p></section></div></div>
+</main><script src="model.js"></script><script src="demo.js"></script></body></html>

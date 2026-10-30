@@ -1,0 +1,103 @@
+{
+  "id": "production-deposit-logistic",
+  "sceneId": "pr5",
+  "title": "结蜡与结垢预测：双机理风险与维护复核",
+  "methods": [
+    "ts"
+  ],
+  "version": "1.0.0",
+  "updated": "2026-10-23",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "分别理解有机蜡和无机盐沉积，再判断风险分数能支持什么决策。",
+      "sections": [
+        {
+          "en": "WAX",
+          "title": "结蜡：先分清析出与沉积",
+          "html": "<style>\n.lesson-split{display:grid;grid-template-columns:minmax(0,42fr) minmax(0,58fr);gap:30px;align-items:start;max-width:1120px;margin:18px 0}\n.lesson-split figure{margin:0;max-width:620px;width:100%}.lesson-split svg{display:block;width:100%;height:auto;border:1px solid #e9e4d8;border-radius:6px;background:#fdfcf9}\n.sec4 .lesson-split p{font-size:14px;line-height:1.85;margin:0 0 12px}.lesson-split figcaption{font-size:12px;line-height:1.6;color:#79828a;margin-top:8px}\n.panel:has(.lesson-flow) .case-lead{display:block}.panel:has(.lesson-flow) .case-lead>div:first-child{max-width:1000px}.panel:has(.lesson-flow) .case-cells{grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:18px 0}\n.lesson-flow h4{font-size:15px;color:#235f51}.lesson-end{display:grid;grid-template-columns:1fr 1fr;gap:30px;max-width:1120px}.lesson-end h4{font-size:15px;color:#235f51}.lesson-end p{font-size:14px!important}\n@media(max-width:900px){.lesson-split,.lesson-end{grid-template-columns:1fr;gap:16px}}@media(max-width:480px){.panel:has(.lesson-flow) .case-cells{grid-template-columns:1fr}}\n</style><div class=\"lesson-split\"><div><p>含蜡原油在温度变化时可能出现蜡晶析出。是否进一步形成管壁沉积，还取决于输运和壁面条件，不能仅凭温度越过某值就判断堵塞。</p><p>本例以“析蜡点减流体温度”为输入，正值代表流体温度低于设定析蜡点；另加入含蜡量、流速和维护间隔。</p><p>模型学习的是教学标签下未来七天的事件分数。右图只指出可能的沉积位置，不把分数转换成实际厚度。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 260\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"35\" y=\"65\" width=\"550\" height=\"115\" rx=\"12\" fill=\"#e9e3d8\" stroke=\"#87998f\" stroke-width=\"3\"/><rect x=\"45\" y=\"87\" width=\"530\" height=\"71\" rx=\"8\" fill=\"#fffdf7\"/><path d=\"M60 88Q160 60 260 88T550 88M60 157Q160 185 260 157T550 157\" stroke=\"#b26a39\" stroke-width=\"12\" fill=\"none\"/><path d=\"M220 122H410m-12-6 12 6-12 6\" stroke=\"#2f7d6b\" stroke-width=\"2\" fill=\"none\"/><text x=\"35\" y=\"30\">降温可能促使蜡析出，再与输运和壁面条件共同作用</text><text x=\"55\" y=\"218\">温度相对析蜡点 / 含蜡量 / 流速 / 维护间隔</text><text x=\"55\" y=\"241\">析出 ≠ 必然沉积；示意蜡层不是预测厚度。</text></g></svg><figcaption>有机蜡沉积概念示意，几何与量级均为教学简化。</figcaption></figure></div>"
+        },
+        {
+          "en": "SCALE",
+          "title": "结垢：水相中的无机盐析出是另一套机理",
+          "html": "<div class=\"lesson-split\"><div><p>结垢涉及无机盐的析出与沉积，可能与温度、压力或水组成变化有关。不相容水混合也是需要关注的条件，不能直接复用结蜡温差公式。</p><p>本例单独输入简化过饱和指标SI、含水率、混水指数和维护间隔。它们用于合成教学关系，不进行具体盐种的水化学平衡计算。</p><p>切换结垢时，训练样本、输入尺度与模型系数全部独立。相同的逻辑回归算法，并不意味着两种机理可以混成同一个任务。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 260\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"35\" y=\"65\" width=\"550\" height=\"115\" rx=\"12\" fill=\"#e3e8ed\" stroke=\"#87998f\" stroke-width=\"3\"/><rect x=\"45\" y=\"87\" width=\"530\" height=\"71\" rx=\"8\" fill=\"#fbfdff\"/><g fill=\"#41699b\"><path d=\"M70 87l12 18 14-18ZM160 87l13 18 15-18ZM270 87l12 18 14-18ZM390 87l12 18 14-18ZM500 87l12 18 14-18Z\"/><path d=\"M110 158l12-18 14 18ZM220 158l12-18 14 18ZM330 158l12-18 14 18ZM450 158l12-18 14 18Z\"/></g><text x=\"35\" y=\"30\">水相平衡变化或不相容混水，可能使无机盐析出</text><path d=\"M220 122H410m-12-6 12 6-12 6\" stroke=\"#2f7d6b\" stroke-width=\"2\" fill=\"none\"/><text x=\"55\" y=\"218\">简化过饱和指标 / 含水率 / 混水指数 / 维护间隔</text><text x=\"55\" y=\"241\">SI为教学输入，本例没有求解水化学平衡。</text></g></svg><figcaption>无机盐沉积位置示意，不判断具体盐类或给出药剂建议。</figcaption></figure></div>"
+        },
+        {
+          "en": "RISK MODEL",
+          "title": "从四个输入到一个可解释的风险分数",
+          "html": "<div class=\"lesson-split\"><div><p>逻辑回归把标准化输入乘以学习到的系数，再与截距相加得到logit，最后经sigmoid转换为0—1分数。</p><p>正贡献将分数推高，负贡献将分数压低。贡献条形解释当前模型的计算依据，不能解释成改变某因素就一定会造成同等变化。</p><p>设定复核阈值后，分数决定是否进入检查候选。阈值应结合误报、漏报与业务需求复核，而不是把一次高分直接当成清洗指令。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"25\" y=\"55\" width=\"165\" height=\"95\" rx=\"6\" fill=\"#e6efe5\"/><rect x=\"225\" y=\"55\" width=\"165\" height=\"95\" rx=\"6\" fill=\"#f0e7d8\"/><rect x=\"425\" y=\"55\" width=\"165\" height=\"95\" rx=\"6\" fill=\"#e5eaf2\"/><text x=\"40\" y=\"85\">四个输入分别标准化</text><text x=\"40\" y=\"119\">使用训练均值 / 尺度</text><text x=\"244\" y=\"85\">截距 + 四项贡献</text><text x=\"244\" y=\"119\">得到 logit</text><text x=\"444\" y=\"85\">sigmoid 转换</text><text x=\"444\" y=\"119\">0—1 模型分数</text><path d=\"M195 103H220M395 103H420\" stroke=\"#79828a\" stroke-width=\"2\"/><text x=\"30\" y=\"205\">条形解释的是logit方向与大小，不是因果效果或概率增量。</text></g></svg><figcaption>可解释计算链；具体系数由当前教学训练样本拟合。</figcaption></figure></div>"
+        },
+        {
+          "en": "DATA & LIMITS",
+          "title": "标签含义与维护边界",
+          "html": "<div class=\"lesson-end\"><div><h4>两套独立训练与测试</h4><p>每套生成600条训练、300条测试样本，使用不同种子。标签表示未来七天是否出现需复核的沉积事件，由概率机制抽样产生，存在不可消除的随机性。</p><p>两套模型都以30天固定维护间隔规则作为对照。改变当前输入只改变当前情景，独立测试集保持不变。</p></div><div><h4>分数不是外部校准概率</h4><p>本例没有真实现场标签、沉积厚度或水化学解算，分数不可直接当成实际油井事件概率。模型建议仅为复核候选。</p><p>参考：<a href=\"https://www.slb.com/products-and-services/delivering-digital-at-scale/software/olga/olga-solids-management/olga-wax\">蜡析出与沉积</a> · <a href=\"https://glossary.slb.com/en/Terms/s/scale\">无机盐结垢</a>。两类机理的简化假设详见代码。</p></div></div>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "案例：为生产井筛选未来七天的沉积复核候选（教学情景）",
+      "lead": [
+        "假设维护组原来每满30天安排一次复核，希望结合当前工况区分优先级：哪些井尚未到周期但风险较高，哪些井需要更多证据。",
+        "分别生成结蜡与结垢两套样本，每套600条训练、300条独立测试。标签为未来七天是否出现需复核的教学事件，输入范围与机理均为明确简化。",
+        "训练两套逻辑回归，展示当前分数、输入贡献和维护间隔条件曲线；通过混淆矩阵与固定30天规则比较，不预设现场节约或增产效果。"
+      ],
+      "stats": [
+        [
+          "独立任务",
+          "结蜡 / 结垢"
+        ],
+        [
+          "每套训练 / 测试",
+          "600 / 300条"
+        ],
+        [
+          "标签预测范围",
+          "未来7天"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "区分两类事件与输入",
+          "do": "分别定义结蜡和结垢未来七天事件标签，整理各自四个输入。",
+          "effect": "避免温度阈值被误用为通用沉积机理。",
+          "trap": "不要把蜡析出、盐析出与实际堵塞混成同一标签。"
+        },
+        {
+          "name": "独立划分与标准化",
+          "do": "每套600条训练、300条独立测试；均值和标准差仅从训练计算。",
+          "effect": "未来测试标签不参与数据尺度估计。",
+          "trap": "用测试统计量拟合会泄漏评价信息。"
+        },
+        {
+          "name": "拟合两套逻辑回归",
+          "do": "全批量梯度下降500轮，学习率0.12，非截距L2系数0.01。",
+          "effect": "每套得到截距与四个系数，贡献可视化。",
+          "trap": "合成相关关系不是现场因果证明。"
+        },
+        {
+          "name": "生成分数与复核候选",
+          "do": "将当前输入变成分数，与0.2—0.8可调阈值比较；绘制条件维护间隔曲线。",
+          "effect": "观察同一输入在不同阈值下的复核状态。",
+          "trap": "情景曲线不等于未来实际沉积轨迹。"
+        },
+        {
+          "name": "检验误报漏报与基线",
+          "do": "在独立测试集计算混淆矩阵、召回率、精确率、误报率，与满30天规则比较。",
+          "effect": "理解减少漏报需要付出的复核负担。",
+          "trap": "阈值调节是教学探索，不可追逐测试最优后宣称无偏成绩。"
+        }
+      ],
+      "metrics": {
+        "title": "两个需要看懂的关键环节",
+        "html": "<div class=\"lesson-flow\"><h4>为什么相同算法需要分成两个模型？</h4><div class=\"lesson-split\"><div><p>两种沉积的输入含义与标签机制不同。每次切换任务使用各自训练统计量和系数，不能只替换标题继续使用同一权重。</p><p>演示中可比较贡献方向、混淆矩阵和固定周期基线，确认两套计算确实独立。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 250\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><rect x=\"30\" y=\"35\" width=\"245\" height=\"145\" rx=\"6\" fill=\"#f5ede0\"/><rect x=\"345\" y=\"35\" width=\"245\" height=\"145\" rx=\"6\" fill=\"#e8edf4\"/><text x=\"50\" y=\"64\">结蜡任务</text><text x=\"50\" y=\"97\">温差 / 含蜡 / 流速 / 天数</text><text x=\"50\" y=\"127\">600训练 → 独立拟合</text><text x=\"50\" y=\"157\">300测试 → 单独评价</text><text x=\"365\" y=\"64\">结垢任务</text><text x=\"365\" y=\"97\">SI / 含水 / 混水 / 天数</text><text x=\"365\" y=\"127\">600训练 → 独立拟合</text><text x=\"365\" y=\"157\">300测试 → 单独评价</text><text x=\"30\" y=\"225\">相同算法，不同特征、标签生成机制、训练统计量与系数。</text></g></svg><figcaption>两条训练路径不共享标签或标准化参数。</figcaption></figure></div><h4>调阈值改变的是复核范围，不是物理状态</h4><div class=\"lesson-split\"><div><p>降低阈值会让更多样本进入复核，因此漏报数量不增加，但误报数量可能增加。具体精确率变化还要看样本分布。</p><p>演示同时展示风险条上的阈值、独立测试混淆矩阵以及固定周期基线。图中条高只作复核范围概念说明。</p></div><figure><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 270\" role=\"img\" aria-label=\"教学示意图\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"13\" fill=\"#4d565b\"><path d=\"M45 195H575\" stroke=\"#87998f\"/><rect x=\"65\" y=\"80\" width=\"130\" height=\"115\" fill=\"#d5e6dc\"/><rect x=\"200\" y=\"115\" width=\"130\" height=\"80\" fill=\"#e7e9dd\"/><rect x=\"335\" y=\"145\" width=\"130\" height=\"50\" fill=\"#eee0cf\"/><text x=\"75\" y=\"55\">阈值低</text><text x=\"342\" y=\"55\">阈值高</text><text x=\"75\" y=\"221\">复核范围更大</text><text x=\"340\" y=\"221\">复核范围更小</text><text x=\"40\" y=\"247\">范围收缩可能减少误报，也可能漏掉更多事件，需查看混淆矩阵。</text></g></svg><figcaption>实际漏报与误报数由当前测试样本重新统计。</figcaption></figure></div></div>"
+      }
+    },
+    "demo": {
+      "mode": "module",
+      "js": "demo/module.js",
+      "html": "demo/index.html",
+      "label": "案例演示"
+    }
+  }
+}
