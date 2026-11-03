@@ -1,0 +1,94 @@
+{
+  "id": "refining-quality-lite",
+  "sceneId": "r5",
+  "title": "产品质量在线软测量：双特征近邻学习（精简版）",
+  "methods": [
+    "ts"
+  ],
+  "version": "1.0.0",
+  "updated": "2026-11-03",
+  "status": "ready",
+  "tabs": {
+    "background": {
+      "label": "专业背景",
+      "lede": "用过程测量估计滞后化验指标，演示质量软测量的基本思路。",
+      "sections": [
+        {
+          "en": "CONTEXT",
+          "title": "场景与输入是什么",
+          "html": "<style>.lite-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start;max-width:1120px}.lite-split svg{width:100%;height:auto}.lite-split p{font-size:15px;line-height:1.9}.lite-sequence{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}.lite-sequence span{padding:14px;border-bottom:3px solid #2c7d68;background:#f2f5ef}@media(max-width:850px){.lite-split{grid-template-columns:1fr}.lite-sequence{grid-template-columns:1fr 1fr}}</style><div class=\"lite-split\"><div><p>软测量利用可连续采集的过程变量估计不易实时测得的质量指标。本例固定原料类型，只以温度与流量学习一个无量纲教学质量指数。</p><p>用过程测量估计滞后化验指标，演示质量软测量的基本思路。</p><p>右图把两项输入与模型输出对应起来。近邻方法从有标签记录中寻找相似条件，提供便于复核的预测依据。</p></div><figure><svg viewBox=\"0 0 600 280\" role=\"img\" aria-label=\"从石油场景输入到近邻预测的关系\"><g font-family=\"Microsoft YaHei,sans-serif\" font-size=\"17\" fill=\"#365447\"><rect x=\"20\" y=\"35\" width=\"245\" height=\"75\" fill=\"#e6efe8\"/><text x=\"40\" y=\"65\">输入一：过程温度</text><text x=\"40\" y=\"92\">160—240 ℃</text><rect x=\"20\" y=\"130\" width=\"245\" height=\"75\" fill=\"#e6efe8\"/><text x=\"40\" y=\"160\">输入二：进料流量</text><text x=\"40\" y=\"187\">50—150 t/h</text><path d=\"M275 75L330 120L275 165 M330 120H365\" stroke=\"#9aa99c\" fill=\"none\" stroke-width=\"3\"/><rect x=\"370\" y=\"70\" width=\"210\" height=\"100\" fill=\"#f6eddf\"/><text x=\"390\" y=\"105\">查找相似训练记录</text><text x=\"390\" y=\"140\">加权数值预测</text><text x=\"25\" y=\"250\">两项输入联合比较；模型依据来自有标签样本。</text></g></svg></figure></div>"
+        },
+        {
+          "en": "LEARNING",
+          "title": "为什么使用近邻学习",
+          "html": "<div class=\"lite-split\"><div><p>两项输入的组合可能比单独观察某个参数更有解释力。把输入按各自取值范围缩放到0—1，避免量纲主导距离，再查找最相近的k条记录。</p><p>回归按1/(距离+0.04)加权平均邻居的观测值，相似记录具有更高权重。</p></div><div><h4>本例要观察的关系</h4><p>比较不同温度流量组合，观察预测和测试散点，并与训练均值基线比较。</p><h4>数据说明</h4><p>训练120条、独立测试60条；全部为合成数据。教学生成公式可在演示底部展开查看，模型预测只使用训练记录。</p><p>指数为教学输出，不对应真实产品牌号、辛烷值或合格标准。</p></div></div>"
+        }
+      ]
+    },
+    "workflow": {
+      "label": "案例流程",
+      "title": "案例：产品质量在线软测量的双特征初步建模（教学情境）",
+      "lead": [
+        "假设整理了120条加工场景的带标签记录，另有60条独立生成的测试记录。固定其他因素，研究过程温度与进料流量对结果的联合影响。",
+        "用过程测量估计滞后化验指标，演示质量软测量的基本思路。。目标是比较近邻模型与简单基线的测试表现，并能定位当前预测参考了哪些记录。"
+      ],
+      "stats": [
+        [
+          "训练记录",
+          "120"
+        ],
+        [
+          "独立测试",
+          "60"
+        ],
+        [
+          "输入变量",
+          "2"
+        ]
+      ],
+      "steps": [
+        {
+          "name": "准备样本与假设",
+          "role": "数据",
+          "do": "软测量利用可连续采集的过程变量估计不易实时测得的质量指标。本例固定原料类型，只以温度与流量学习一个无量纲教学质量指数。 合成响应关系在演示中完整公开。",
+          "effect": "把输入范围、标签与任务目标联系起来。",
+          "trap": "教学标签不冒充现场标注。"
+        },
+        {
+          "name": "缩放输入与寻找近邻",
+          "role": "模型",
+          "do": "两项输入按范围缩放，计算二维欧氏距离，选最近的k条训练记录。",
+          "effect": "去除量纲差异，保留联合相似性。",
+          "trap": "当前测试标签不进入近邻检索。"
+        },
+        {
+          "name": "生成预测并展示依据",
+          "role": "解释",
+          "do": "多数票分类或距离加权回归；列出近邻记录和距离，同时在散点图标出输入与邻居。",
+          "effect": "把最终预测追溯到实际使用的训练记录。",
+          "trap": "类别交界或训练稀疏处需要结合邻居分布理解。"
+        },
+        {
+          "name": "独立测试与参数实验",
+          "role": "评价",
+          "do": "分类比较混淆矩阵与多数类基线；回归比较MAE与均值基线。调节扰动、k和输入观察结果。",
+          "effect": "同时看当前样本与整组测试表现。",
+          "trap": "基线来自训练集，测试标签只用于计算成绩。"
+        }
+      ],
+      "metrics": {
+        "title": "四步之间的关系",
+        "html": "<div class=\"lite-sequence\"><span>样本假设</span><span>特征缩放</span><span>相似记录学习</span><span>独立评价</span></div><p>比较不同温度流量组合，观察预测和测试散点，并与训练均值基线比较。</p>"
+      }
+    }
+  },
+  "demo": {
+    "mode": "module",
+    "js": "demo/module.js",
+    "html": "demo/index.html",
+    "label": "案例演示"
+  },
+  "meta": {
+    "title": "产品质量在线软测量"
+  }
+}
