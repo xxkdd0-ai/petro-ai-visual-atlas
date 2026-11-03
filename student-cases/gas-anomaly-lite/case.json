@@ -1,7 +1,7 @@
 {
   "id": "gas-anomaly-lite",
   "sceneId": "m2",
-  "title": "气测异常智能解释：双特征近邻学习（精简版）",
+  "title": "气测异常智能解释：双特征近邻学习",
   "methods": [
     "ts"
   ],

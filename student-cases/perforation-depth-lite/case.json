@@ -1,7 +1,7 @@
 {
   "id": "perforation-depth-lite",
   "sceneId": "p2",
-  "title": "射孔孔道形态预测：双特征近邻学习（精简版）",
+  "title": "射孔孔道形态预测：双特征近邻学习",
   "methods": [
     "ts"
   ],

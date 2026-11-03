@@ -1,7 +1,7 @@
 {
   "id": "completion-stress-lite",
   "sceneId": "co3",
-  "title": "完井管柱受力智能分析：双特征近邻学习（精简版）",
+  "title": "完井管柱受力智能分析：双特征近邻学习",
   "methods": [
     "ts"
   ],

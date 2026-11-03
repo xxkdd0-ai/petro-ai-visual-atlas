@@ -1,7 +1,7 @@
 {
   "id": "cement-quality-lite",
   "sceneId": "c1",
-  "title": "固井质量智能评价：双特征近邻学习（精简版）",
+  "title": "固井质量智能评价：双特征近邻学习",
   "methods": [
     "cv"
   ],

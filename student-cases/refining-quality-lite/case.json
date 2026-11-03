@@ -1,7 +1,7 @@
 {
   "id": "refining-quality-lite",
   "sceneId": "r5",
-  "title": "产品质量在线软测量：双特征近邻学习（精简版）",
+  "title": "产品质量在线软测量：双特征近邻学习",
   "methods": [
     "ts"
   ],

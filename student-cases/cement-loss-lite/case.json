@@ -1,7 +1,7 @@
 {
   "id": "cement-loss-lite",
   "sceneId": "c3",
-  "title": "固井漏失风险预测：双特征近邻学习（精简版）",
+  "title": "固井漏失风险预测：双特征近邻学习",
   "methods": [
     "ts"
   ],

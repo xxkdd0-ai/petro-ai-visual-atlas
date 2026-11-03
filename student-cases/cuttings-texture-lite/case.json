@@ -1,7 +1,7 @@
 {
   "id": "cuttings-texture-lite",
   "sceneId": "m1",
-  "title": "岩屑岩性自动识别：双特征近邻学习（精简版）",
+  "title": "岩屑岩性自动识别：双特征近邻学习",
   "methods": [
     "cv"
   ],

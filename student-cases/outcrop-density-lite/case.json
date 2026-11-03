@@ -1,7 +1,7 @@
 {
   "id": "outcrop-density-lite",
   "sceneId": "g4",
-  "title": "露头裂缝自动统计：双特征近邻学习（精简版）",
+  "title": "露头裂缝自动统计：双特征近邻学习",
   "methods": [
     "ts"
   ],

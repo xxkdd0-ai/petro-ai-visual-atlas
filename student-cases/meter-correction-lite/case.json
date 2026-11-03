@@ -1,7 +1,7 @@
 {
   "id": "meter-correction-lite",
   "sceneId": "t4",
-  "title": "油气计量智能校正：双特征近邻学习（精简版）",
+  "title": "油气计量智能校正：双特征近邻学习",
   "methods": [
     "ts"
   ],

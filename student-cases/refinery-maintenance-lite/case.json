@@ -1,7 +1,7 @@
 {
   "id": "refinery-maintenance-lite",
   "sceneId": "r3",
-  "title": "炼化设备预测性维护：双特征近邻学习（精简版）",
+  "title": "炼化设备预测性维护：双特征近邻学习",
   "methods": [
     "ts"
   ],

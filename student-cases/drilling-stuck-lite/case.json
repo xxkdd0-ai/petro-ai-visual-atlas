@@ -1,7 +1,7 @@
 {
   "id": "drilling-stuck-lite",
   "sceneId": "d2",
-  "title": "井下复杂事故前兆预警：双特征近邻学习（精简版）",
+  "title": "井下复杂事故前兆预警：双特征近邻学习",
   "methods": [
     "ts"
   ],

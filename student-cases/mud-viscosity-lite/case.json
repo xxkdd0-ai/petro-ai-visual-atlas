@@ -1,7 +1,7 @@
 {
   "id": "mud-viscosity-lite",
   "sceneId": "d5",
-  "title": "钻井液性能智能调控：双特征近邻学习（精简版）",
+  "title": "钻井液性能智能调控：双特征近邻学习",
   "methods": [
     "ts"
   ],

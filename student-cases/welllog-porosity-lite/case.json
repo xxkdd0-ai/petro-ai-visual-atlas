@@ -1,7 +1,7 @@
 {
   "id": "welllog-porosity-lite",
   "sceneId": "w2",
-  "title": "储层参数智能解释：双特征近邻学习（精简版）",
+  "title": "储层参数智能解释：双特征近邻学习",
   "methods": [
     "ts"
   ],

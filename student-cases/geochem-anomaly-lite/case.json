@@ -1,7 +1,7 @@
 {
   "id": "geochem-anomaly-lite",
   "sceneId": "g2",
-  "title": "油气地球化学异常识别：双特征近邻学习（精简版）",
+  "title": "油气地球化学异常识别：双特征近邻学习",
   "methods": [
     "ts"
   ],

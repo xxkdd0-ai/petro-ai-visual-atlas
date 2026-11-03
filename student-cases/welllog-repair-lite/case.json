@@ -1,7 +1,7 @@
 {
   "id": "welllog-repair-lite",
   "sceneId": "w5",
-  "title": "测井数据修复：双特征近邻学习（精简版）",
+  "title": "测井数据修复：双特征近邻学习",
   "methods": [
     "ts"
   ],
